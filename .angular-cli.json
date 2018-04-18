@@ -1,0 +1,35 @@
+{
+  "project": {
+    "name": "agm-overlays"
+  },
+  "apps": [
+    {
+      "name": "example",
+      "root": "example/src",
+      "outDir": "example/www",
+      "index": "index.html",
+      "main": "index.ts",
+      "tsconfig": "tsconfig.json",
+      "prefix": "",
+      "assets":[]
+    }
+  ],
+  "addons": [],
+  "packages": [],
+  "defaults": {
+    "styleExt": "css",
+    "prefixInterfaces": false,
+    "inline": {
+      "style": false,
+      "template": false
+    },
+    "spec": {
+      "class": false,
+      "component": true,
+      "directive": true,
+      "module": false,
+      "pipe": true,
+      "service": true
+    }
+  }
+}

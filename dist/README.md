@@ -74,7 +74,6 @@ import { BrowserModule } from '@angular/platform-browser'
 - [@agm/core](https://www.npmjs.com/package/@agm/core) installed
 
 # Credits and Collaborators
-- [Acker Apple](https://github.com/AckerApple)
 - [Todd Greenberg](https://github.com/tsgreenberg1217)
 
 # Also Try

@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "noEmitHelpers": false,
+    "allowJs": true,
+    "noImplicitAny": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "lib": ["es2015", "dom"],
+    "outDir": "../www"
+  },
+  "include":[
+    "../package.json",
+    "./index.ts"
+  ],
+  "files": [
+    "typings.d.ts"
+  ]
+}

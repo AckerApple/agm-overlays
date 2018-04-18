@@ -1,0 +1,24 @@
+{
+  "name": "agm-overlays",
+  "version": "1.0.0",
+  "description": "Custom marker overlay for the @agm/core package",
+  "main": "index",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ackerapple/agm-overlays.git"
+  },
+  "keywords": [
+    "agm",
+    "overlay",
+    "custom",
+    "markers",
+    "google",
+    "maps"
+  ],
+  "author": "Acker Apple",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ackerapple/agm-overlays/issues"
+  },
+  "homepage": "https://github.com/ackerapple/agm-overlays#readme"
+}

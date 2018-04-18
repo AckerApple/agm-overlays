@@ -32,12 +32,12 @@ Please be sure you have installed:
 
 # Install
 Open a command terminal and type the following
-```
+```bash
 npm install agm-overlays --save-dev
 ```
 
 # Import
-```
+```typescript
 import { AgmOverlays } from "@agm-overlays"
 import { NgModule } from "@angular/core"
 import { BrowserModule } from '@angular/platform-browser'
@@ -54,7 +54,7 @@ import { BrowserModule } from '@angular/platform-browser'
 ```
 
 # Usage
-```
+```typescript
 <agm-map
   [zoom] = "5"
   style  = "height:300px;display:block;"
@@ -74,6 +74,7 @@ import { BrowserModule } from '@angular/platform-browser'
 - [@agm/core](https://www.npmjs.com/package/@agm/core) installed
 
 # Credits and Collaborators
+- [Acker Apple](https://github.com/AckerApple)
 - [Todd Greenberg](https://github.com/tsgreenberg1217)
 
 # Also Try

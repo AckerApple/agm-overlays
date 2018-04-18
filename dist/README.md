@@ -54,7 +54,7 @@ import { BrowserModule } from '@angular/platform-browser'
 ```
 
 # Usage
-```typescript
+```html
 <agm-map
   [zoom] = "5"
   style  = "height:300px;display:block;"

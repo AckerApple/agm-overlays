@@ -16,9 +16,6 @@ var AgmOverlay = (function () {
         this.destroy();
     };
     AgmOverlay.prototype.destroy = function () {
-        var div = this.overlayView.div;
-        div.parentNode.removeChild(div);
-        delete this.overlayView.div;
         this.overlayView.setMap(null);
         delete this.overlayView;
     };
@@ -48,6 +45,10 @@ var AgmOverlay = (function () {
         this.overlayView = this.overlayView || new google.maps.OverlayView();
         var latlng = new google.maps.LatLng(this.latitude, this.longitude);
         var elm = this.template.nativeElement.children[0];
+        this.overlayView.remove = function () {
+            this.div.parentNode.removeChild(this.div);
+            delete this.div;
+        };
         this.overlayView.draw = function () {
             if (!this.div) {
                 this.div = elm;

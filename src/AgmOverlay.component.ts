@@ -45,29 +45,39 @@ declare var google: any
   }
 
   load(){
-    return this._mapsWrapper.getNativeMap()
-    .then( map=>this.loadByMap(map) )
+    this._mapsWrapper.getNativeMap()
+    .then(map=>{
+      // appends to map as overlays (markers)
+      this.drawOnMap( map )
+
+      const latlng = new google.maps.LatLng(this.latitude, this.longitude)
+
+      // configures the bounds of the map to fit the markers
+      this.addBounds( latlng, map )
+    })
   }
 
-  loadByMap( map:GoogleMap ){
-    // appends to map as overlays (markers)
-    this.drawOnMap( map )
-
-    const latlng = new google.maps.LatLng(this.latitude, this.longitude)
-
-    // configures the bounds of the map to fit the markers
-    this.addBounds( latlng, map )
+  promiseBounds():Promise<LatLngBounds>{
+    return this._mapsWrapper.getNativeMap()
+    .then(map=>{
+      let bounds = map.getBounds() || map['bounds']
+      if( !bounds ){
+        bounds = new google.maps.LatLngBounds()
+        map['bounds'] = bounds
+      }
+      return bounds
+    })
   }
 
   addBounds( latlng:LatLng, map:GoogleMap ){
-    let bounds = map.getBounds() || map['bounds']
-    
-    if( !bounds ){
-      bounds = new google.maps.LatLngBounds()
-      map['bounds'] = bounds
-    }
-    bounds.extend( latlng )
-    this._mapsWrapper.fitBounds( bounds )//center map on all overlays
+    this.promiseBounds()
+    .then(bounds=>{
+      const zero = bounds.isEmpty()
+      bounds.extend( latlng )
+      if( !zero ){
+        this._mapsWrapper.fitBounds( bounds )//center map on all overlays
+      }
+    })
   }
 
   drawOnMap( map:GoogleMap ){

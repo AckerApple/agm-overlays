@@ -1,5 +1,5 @@
 import { ElementRef } from "@angular/core";
-import { LatLng, GoogleMapsAPIWrapper } from "@agm/core";
+import { LatLngBounds, LatLng, GoogleMapsAPIWrapper } from "@agm/core";
 import { GoogleMap } from "@agm/core/services/google-maps-types";
 export declare class AgmOverlay {
     protected _mapsWrapper: GoogleMapsAPIWrapper;
@@ -12,8 +12,8 @@ export declare class AgmOverlay {
     ngOnDestroy(): void;
     destroy(): void;
     ngAfterViewInit(): void;
-    load(): Promise<void>;
-    loadByMap(map: GoogleMap): void;
+    load(): void;
+    promiseBounds(): Promise<LatLngBounds>;
     addBounds(latlng: LatLng, map: GoogleMap): void;
     drawOnMap(map: GoogleMap): void;
 }

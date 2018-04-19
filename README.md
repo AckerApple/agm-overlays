@@ -54,13 +54,30 @@ import { BrowserModule } from '@angular/platform-browser'
 ```
 
 # Usage
+**Multiple Custom Overlays**
 ```html
-<agm-map
-  [zoom] = "5"
-  style  = "height:300px;display:block;"
->
+<agm-map style="height:300px;display:block;">
   <agm-overlay
     *ngFor      = "let item of latLngArray"
+    [latitude]  = "item.latitude"
+    [longitude] = "item.longitude"
+  >
+    <!-- blue html square -->
+    <div style="width:15px;height:15px;background-color:blue;"></div>
+  </agm-overlay>
+</agm-map>
+```
+> With multiple custom overlays, the zoom is auto set by the bounds calculated amongst all custom overlays
+
+**Single Custom Overlay**
+```html
+<agm-map
+  [zoom] = "12"
+  style  = "height:300px;display:block;"
+  [latitude]  = "item.latitude"
+  [longitude] = "item.longitude"
+>
+  <agm-overlay
     [latitude]  = "item.latitude"
     [longitude] = "item.longitude"
   >

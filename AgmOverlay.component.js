@@ -24,22 +24,34 @@ var AgmOverlay = (function () {
     };
     AgmOverlay.prototype.load = function () {
         var _this = this;
-        return this._mapsWrapper.getNativeMap()
-            .then(function (map) { return _this.loadByMap(map); });
+        this._mapsWrapper.getNativeMap()
+            .then(function (map) {
+            _this.drawOnMap(map);
+            var latlng = new google.maps.LatLng(_this.latitude, _this.longitude);
+            _this.addBounds(latlng, map);
+        });
     };
-    AgmOverlay.prototype.loadByMap = function (map) {
-        this.drawOnMap(map);
-        var latlng = new google.maps.LatLng(this.latitude, this.longitude);
-        this.addBounds(latlng, map);
+    AgmOverlay.prototype.promiseBounds = function () {
+        return this._mapsWrapper.getNativeMap()
+            .then(function (map) {
+            var bounds = map.getBounds() || map['bounds'];
+            if (!bounds) {
+                bounds = new google.maps.LatLngBounds();
+                map['bounds'] = bounds;
+            }
+            return bounds;
+        });
     };
     AgmOverlay.prototype.addBounds = function (latlng, map) {
-        var bounds = map.getBounds() || map['bounds'];
-        if (!bounds) {
-            bounds = new google.maps.LatLngBounds();
-            map['bounds'] = bounds;
-        }
-        bounds.extend(latlng);
-        this._mapsWrapper.fitBounds(bounds);
+        var _this = this;
+        this.promiseBounds()
+            .then(function (bounds) {
+            var zero = bounds.isEmpty();
+            bounds.extend(latlng);
+            if (!zero) {
+                _this._mapsWrapper.fitBounds(bounds);
+            }
+        });
     };
     AgmOverlay.prototype.drawOnMap = function (map) {
         this.overlayView = this.overlayView || new google.maps.OverlayView();

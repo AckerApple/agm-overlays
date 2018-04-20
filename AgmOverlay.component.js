@@ -43,13 +43,14 @@ var AgmOverlay = (function () {
         });
     };
     AgmOverlay.prototype.addBounds = function (latlng, map) {
-        var _this = this;
         this.promiseBounds()
             .then(function (bounds) {
             var zero = bounds.isEmpty();
             bounds.extend(latlng);
             if (!zero) {
-                _this._mapsWrapper.fitBounds(bounds);
+                var zoom_1 = map.getZoom();
+                map.fitBounds(bounds);
+                setTimeout(function () { return map.setZoom(zoom_1); }, 60);
             }
         });
     };

@@ -75,7 +75,9 @@ declare var google: any
       const zero = bounds.isEmpty()
       bounds.extend( latlng )
       if( !zero ){
-        this._mapsWrapper.fitBounds( bounds )//center map on all overlays
+        const zoom = map.getZoom()
+        map.fitBounds( bounds )//center map on all overlays
+        setTimeout(()=>map.setZoom(zoom), 60)//reset the zoom the bounds steals
       }
     })
   }

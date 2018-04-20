@@ -17,7 +17,7 @@ export const template =
   <tr *ngIf="!view">
     <td style="height:100%">
       <agm-map
-        [zoom] = "18"
+        [zoom] = "14"
         style  = "height:100%;width:100%;display:block;"
         [latitude]  = "latLngArray.length ? latLngArray[0].latitude : null"
         [longitude] = "latLngArray.length ? latLngArray[0].longitude : null"

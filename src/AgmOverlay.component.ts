@@ -108,6 +108,8 @@ declare var google: any
         elm.style.top = (point.y - 20) + 'px'
       }
     }
+
+    this.overlayView.setMap(map)
   }
 
   /*promiseBounds():Promise<LatLngBounds>{

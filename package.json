@@ -1,6 +1,6 @@
 {
   "name": "agm-overlays",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Custom marker overlay for the @agm/core package",
   "main": "index",
   "repository": {

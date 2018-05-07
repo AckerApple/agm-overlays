@@ -63,6 +63,7 @@ var AgmOverlay = (function () {
                 elm.style.top = (point.y - 20) + 'px';
             }
         };
+        this.overlayView.setMap(map);
     };
     AgmOverlay.decorators = [
         { type: core_1.Component, args: [{

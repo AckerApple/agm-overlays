@@ -27,17 +27,23 @@ declare var google: any
   constructor(
     protected _mapsWrapper: GoogleMapsAPIWrapper,
     private _markerManager: MarkerManager//rename to fight the private declaration of parent
-  ){
+  ){}
+
+  ngAfterViewInit(){
+    this.load().then(()=>{
+      this.onChanges = this.onChangesOverride
+    })
   }
 
   ngOnChanges( changes ){
+    this.onChanges(changes)
+  }
+
+  onChanges( changes ){}
+
+  onChangesOverride( changes ){
     if( (changes.latitude || changes.longitude) ){
-      //this.destroy()
-      if( this.overlayView && this.overlayView.draw ){
-        this.overlayView.draw()
-      }else{
-        this.load()
-      }
+      this.overlayView.draw()
     }
   }
 
@@ -46,19 +52,19 @@ declare var google: any
   }
 
   destroy(){
+    this._markerManager.deleteMarker( this.overlayView )
     this.overlayView.setMap(null)
     delete this.overlayView
   }
 
-  load(){
-    this._mapsWrapper.getNativeMap()
+  load():Promise<void>{
+    return this._mapsWrapper.getNativeMap()
     .then(map=>{
-      this.drawOnMap( map )
+      const overlay = this.getOverlay( map )
 
-      this._markerManager.addMarker( <any>this.overlayView )
+      this._markerManager.addMarker( <any>overlay )
       
-      return this._markerManager.getNativeMarker( this.overlayView )
-
+      return this._markerManager.getNativeMarker( overlay )
       /* bounds */
       /*
       const latlng = new google.maps.LatLng(this.latitude, this.longitude)
@@ -71,14 +77,21 @@ declare var google: any
     .then(nativeMarker=>{
       const setMap = nativeMarker.setMap
       
+      if( nativeMarker['map'] ){
+        this.overlayView.setMap( nativeMarker['map'] )
+      }
+
       nativeMarker.setMap = (map)=>{
         setMap.call(nativeMarker,map)
-        this.overlayView.setMap(map)
+        
+        if( this.overlayView ){
+          this.overlayView.setMap(map)
+        }
       }
     })
   }
 
-  drawOnMap( map:GoogleMap ){
+  getOverlay( map ){
     this.overlayView = this.overlayView || new google.maps.OverlayView()
     
     /* make into foo marker that AGM likes */
@@ -109,7 +122,7 @@ declare var google: any
       }
     }
 
-    this.overlayView.setMap(map)
+    return this.overlayView
   }
 
   /*promiseBounds():Promise<LatLngBounds>{

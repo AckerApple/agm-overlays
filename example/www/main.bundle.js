@@ -132,7 +132,7 @@ platform_browser_dynamic_1.platformBrowserDynamic().bootstrapModule(app_module_1
 /***/ "./package.json":
 /***/ (function(module, exports) {
 
-module.exports = {"name":"agm-overlays","version":"1.1.1","description":"Custom marker overlay for the @agm/core package","main":"dist/index","scripts":{"build":"npm-run-all build:dist compile:dist:package build:js","build:dist":"ngc --declaration --project src","test":"echo \"Error: no test specified\" && exit 1","compile:dist:package":"node scripts/update-dist-package.js","start":"npm run watch","watch":"ng serve --port 4202 --output-hashing=none --sourcemaps=true --app=example --open","build:js":"ng build --output-hashing=none --sourcemaps=true --app=example"},"repository":{"type":"git","url":"git+https://github.com/ackerapple/agm-overlays.git"},"keywords":["agm","overlay","custom","markers","google","maps"],"author":"Acker Apple","license":"MIT","bugs":{"url":"https://github.com/ackerapple/agm-overlays/issues"},"homepage":"https://github.com/ackerapple/agm-overlays#readme","devDependencies":{"@agm/core":"^1.0.0-beta.2","@agm/js-marker-clusterer":"^1.0.0-beta.2","@angular/cli":"^1.7.4","@angular/common":"^5.2.10","@angular/compiler":"^5.2.10","@angular/compiler-cli":"^5.2.10","@angular/core":"^5.2.10","@angular/platform-browser":"^5.2.10","@angular/platform-browser-dynamic":"^5.2.10","js-marker-clusterer":"^1.0.0","npm-run-all":"^4.1.2","reflect-metadata":"^0.1.12","rxjs":"^5.5.10","typescript":"^2.4.2","zone.js":"^0.8.26"}}
+module.exports = {"name":"agm-overlays","version":"1.1.2","description":"Custom marker overlay for the @agm/core package","main":"dist/index","scripts":{"build":"npm-run-all build:dist compile:dist:package build:js","build:dist":"ngc --declaration --project src","test":"echo \"Error: no test specified\" && exit 1","compile:dist:package":"node scripts/update-dist-package.js","start":"npm run watch","watch":"ng serve --port 4202 --output-hashing=none --sourcemaps=true --app=example --open","build:js":"ng build --output-hashing=none --sourcemaps=true --app=example"},"repository":{"type":"git","url":"git+https://github.com/ackerapple/agm-overlays.git"},"keywords":["agm","overlay","custom","markers","google","maps"],"author":"Acker Apple","license":"MIT","bugs":{"url":"https://github.com/ackerapple/agm-overlays/issues"},"homepage":"https://github.com/ackerapple/agm-overlays#readme","devDependencies":{"@agm/core":"^1.0.0-beta.2","@agm/js-marker-clusterer":"^1.0.0-beta.2","@angular/cli":"^1.7.4","@angular/common":"^5.2.10","@angular/compiler":"^5.2.10","@angular/compiler-cli":"^5.2.10","@angular/core":"^5.2.10","@angular/platform-browser":"^5.2.10","@angular/platform-browser-dynamic":"^5.2.10","js-marker-clusterer":"^1.0.0","npm-run-all":"^4.1.2","reflect-metadata":"^0.1.12","rxjs":"^5.5.10","typescript":"^2.4.2","zone.js":"^0.8.26"}}
 
 /***/ }),
 
@@ -160,31 +160,36 @@ var AgmOverlay = (function () {
         this._markerManager = _markerManager; //rename to fight the private declaration of parent
         this.visible = true;
     }
+    AgmOverlay.prototype.ngAfterViewInit = function () {
+        var _this = this;
+        this.load().then(function () {
+            _this.onChanges = _this.onChangesOverride;
+        });
+    };
     AgmOverlay.prototype.ngOnChanges = function (changes) {
+        this.onChanges(changes);
+    };
+    AgmOverlay.prototype.onChanges = function (changes) { };
+    AgmOverlay.prototype.onChangesOverride = function (changes) {
         if ((changes.latitude || changes.longitude)) {
-            //this.destroy()
-            if (this.overlayView && this.overlayView.draw) {
-                this.overlayView.draw();
-            }
-            else {
-                this.load();
-            }
+            this.overlayView.draw();
         }
     };
     AgmOverlay.prototype.ngOnDestroy = function () {
         this.destroy();
     };
     AgmOverlay.prototype.destroy = function () {
+        this._markerManager.deleteMarker(this.overlayView);
         this.overlayView.setMap(null);
         delete this.overlayView;
     };
     AgmOverlay.prototype.load = function () {
         var _this = this;
-        this._mapsWrapper.getNativeMap()
+        return this._mapsWrapper.getNativeMap()
             .then(function (map) {
-            _this.drawOnMap(map);
-            _this._markerManager.addMarker(_this.overlayView);
-            return _this._markerManager.getNativeMarker(_this.overlayView);
+            var overlay = _this.getOverlay(map);
+            _this._markerManager.addMarker(overlay);
+            return _this._markerManager.getNativeMarker(overlay);
             /* bounds */
             /*
             const latlng = new google.maps.LatLng(this.latitude, this.longitude)
@@ -196,13 +201,18 @@ var AgmOverlay = (function () {
         })
             .then(function (nativeMarker) {
             var setMap = nativeMarker.setMap;
+            if (nativeMarker['map']) {
+                _this.overlayView.setMap(nativeMarker['map']);
+            }
             nativeMarker.setMap = function (map) {
                 setMap.call(nativeMarker, map);
-                _this.overlayView.setMap(map);
+                if (_this.overlayView) {
+                    _this.overlayView.setMap(map);
+                }
             };
         });
     };
-    AgmOverlay.prototype.drawOnMap = function (map) {
+    AgmOverlay.prototype.getOverlay = function (map) {
         this.overlayView = this.overlayView || new google.maps.OverlayView();
         /* make into foo marker that AGM likes */
         this.overlayView.iconUrl = " "; //" "
@@ -226,7 +236,7 @@ var AgmOverlay = (function () {
                 elm.style.top = (point.y - 20) + 'px';
             }
         };
-        this.overlayView.setMap(map);
+        return this.overlayView;
     };
     __decorate([
         core_1.Input(),

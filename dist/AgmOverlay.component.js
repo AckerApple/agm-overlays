@@ -8,40 +8,51 @@ var AgmOverlay = (function () {
         this._markerManager = _markerManager;
         this.visible = true;
     }
+    AgmOverlay.prototype.ngAfterViewInit = function () {
+        var _this = this;
+        this.load().then(function () {
+            _this.onChanges = _this.onChangesOverride;
+        });
+    };
     AgmOverlay.prototype.ngOnChanges = function (changes) {
+        this.onChanges(changes);
+    };
+    AgmOverlay.prototype.onChanges = function (changes) { };
+    AgmOverlay.prototype.onChangesOverride = function (changes) {
         if ((changes.latitude || changes.longitude)) {
-            if (this.overlayView && this.overlayView.draw) {
-                this.overlayView.draw();
-            }
-            else {
-                this.load();
-            }
+            this.overlayView.draw();
         }
     };
     AgmOverlay.prototype.ngOnDestroy = function () {
         this.destroy();
     };
     AgmOverlay.prototype.destroy = function () {
+        this._markerManager.deleteMarker(this.overlayView);
         this.overlayView.setMap(null);
         delete this.overlayView;
     };
     AgmOverlay.prototype.load = function () {
         var _this = this;
-        this._mapsWrapper.getNativeMap()
+        return this._mapsWrapper.getNativeMap()
             .then(function (map) {
-            _this.drawOnMap(map);
-            _this._markerManager.addMarker(_this.overlayView);
-            return _this._markerManager.getNativeMarker(_this.overlayView);
+            var overlay = _this.getOverlay(map);
+            _this._markerManager.addMarker(overlay);
+            return _this._markerManager.getNativeMarker(overlay);
         })
             .then(function (nativeMarker) {
             var setMap = nativeMarker.setMap;
+            if (nativeMarker['map']) {
+                _this.overlayView.setMap(nativeMarker['map']);
+            }
             nativeMarker.setMap = function (map) {
                 setMap.call(nativeMarker, map);
-                _this.overlayView.setMap(map);
+                if (_this.overlayView) {
+                    _this.overlayView.setMap(map);
+                }
             };
         });
     };
-    AgmOverlay.prototype.drawOnMap = function (map) {
+    AgmOverlay.prototype.getOverlay = function (map) {
         this.overlayView = this.overlayView || new google.maps.OverlayView();
         this.overlayView.iconUrl = " ";
         this.overlayView.latitude = this.latitude;
@@ -63,7 +74,7 @@ var AgmOverlay = (function () {
                 elm.style.top = (point.y - 20) + 'px';
             }
         };
-        this.overlayView.setMap(map);
+        return this.overlayView;
     };
     AgmOverlay.decorators = [
         { type: core_1.Component, args: [{

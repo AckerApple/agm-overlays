@@ -9,9 +9,11 @@ export interface latLng{
 
 @Component({
   selector:"app",
-  template:template
+  template:template,
+  styles:['.block {justify-content:center;align-items:center;display:flex;width:50px;height:50px;background-color:blue;}']
 }) export class AppComponent{
   view:"data"
+  destroyMap:boolean
   version:string = packJson['version']
   latLngArray:latLng[] = [
     {latitude:26.368755, longitude:-80.137413},

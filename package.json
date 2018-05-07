@@ -1,6 +1,6 @@
 {
   "name": "agm-overlays",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "Custom marker overlay for the @agm/core package",
   "main": "dist/index",
   "scripts": {
@@ -32,6 +32,7 @@
   "homepage": "https://github.com/ackerapple/agm-overlays#readme",
   "devDependencies": {
     "@agm/core": "^1.0.0-beta.2",
+    "@agm/js-marker-clusterer": "^1.0.0-beta.2",
     "@angular/cli": "^1.7.4",
     "@angular/common": "^5.2.10",
     "@angular/compiler": "^5.2.10",
@@ -39,6 +40,7 @@
     "@angular/core": "^5.2.10",
     "@angular/platform-browser": "^5.2.10",
     "@angular/platform-browser-dynamic": "^5.2.10",
+    "js-marker-clusterer": "^1.0.0",
     "npm-run-all": "^4.1.2",
     "reflect-metadata": "^0.1.12",
     "rxjs": "^5.5.10",

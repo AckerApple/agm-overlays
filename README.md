@@ -17,6 +17,7 @@ Custom marker overlay for the @agm/core package
 - [Install](#install)
 - [Import](#import)
 - [Usage](#usage)
+- [Clustering Demo](#clustering-demo)
 - [Resources](#resources)
 - [Credits and Collaborators](#credits-and-collaborators)
 - [Also Try](#also-try)
@@ -86,6 +87,32 @@ import { BrowserModule } from '@angular/platform-browser'
   </agm-overlay>
 </agm-map>
 ```
+
+# Clustering Demo
+Clustering is NOT a responsibility of this package, however it can be done
+
+This demo uses [@agm/js-marker-clusterer](https://www.npmjs.com/package/@agm/js-marker-clusterer) to demonstrate how to do clustering
+
+```html
+<agm-map
+  [latitude]  = "latLngArray[0].latitude"
+  [longitude] = "latLngArray[1].latitude"
+>
+  <agm-marker-cluster imagePath="https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m">
+    <agm-overlay
+      *ngFor      = "let item of latLngArray;let i=index"
+      [latitude]  = "item.latitude"
+      [longitude] = "item.longitude"
+    >
+      <!-- blue html square -->
+      <div class="block">
+        <strong style="color:white;">{{i}}</strong>
+      </div>
+    </agm-overlay>
+  </agm-marker-cluster>
+</agm-map>
+```
+
 
 # Resources
 - [@agm/core](https://www.npmjs.com/package/@agm/core) installed

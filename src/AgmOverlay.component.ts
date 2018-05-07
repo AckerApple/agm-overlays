@@ -1,12 +1,13 @@
 import { Subscription } from "rxjs"
+
 import {
-  Input, Component, Optional,
-  TemplateRef, ViewChild, ElementRef
+  Input, Component, EventEmitter,
+  TemplateRef, ViewChild, ElementRef, QueryList
 } from "@angular/core"
 
 import {
-  LatLngBounds, LatLng,
-  GoogleMapsAPIWrapper
+  AgmInfoWindow, LatLngBounds, LatLng, MarkerManager,
+  GoogleMapsAPIWrapper, AgmMarker
 } from "@agm/core"
 
 import { GoogleMap } from "@agm/core/services/google-maps-types"
@@ -19,15 +20,24 @@ declare var google: any
   overlayView:any
   @Input() latitude:number
   @Input() longitude:number
-
+  @Input() visible: boolean = true
+  
   @ViewChild('content', { read: ElementRef }) template: ElementRef
 
-  constructor(protected _mapsWrapper:GoogleMapsAPIWrapper){}
+  constructor(
+    protected _mapsWrapper: GoogleMapsAPIWrapper,
+    private _markerManager: MarkerManager//rename to fight the private declaration of parent
+  ){
+  }
 
   ngOnChanges( changes ){
-    if( (changes.latitude || changes.longitude) && this.overlayView ){
-      this.destroy()
-      this.load()
+    if( (changes.latitude || changes.longitude) ){
+      //this.destroy()
+      if( this.overlayView && this.overlayView.draw ){
+        this.overlayView.draw()
+      }else{
+        this.load()
+      }
     }
   }
 
@@ -40,24 +50,67 @@ declare var google: any
     delete this.overlayView
   }
 
-  ngAfterViewInit(){
-    this.load()
-  }
-
   load(){
     this._mapsWrapper.getNativeMap()
     .then(map=>{
-      // appends to map as overlays (markers)
       this.drawOnMap( map )
 
+      this._markerManager.addMarker( <any>this.overlayView )
+      
+      return this._markerManager.getNativeMarker( this.overlayView )
+
+      /* bounds */
+      /*
       const latlng = new google.maps.LatLng(this.latitude, this.longitude)
 
       // configures the bounds of the map to fit the markers
       this.addBounds( latlng, map )
+      */
+      /* end:bounds */
+    })
+    .then(nativeMarker=>{
+      const setMap = nativeMarker.setMap
+      
+      nativeMarker.setMap = (map)=>{
+        setMap.call(nativeMarker,map)
+        this.overlayView.setMap(map)
+      }
     })
   }
 
-  promiseBounds():Promise<LatLngBounds>{
+  drawOnMap( map:GoogleMap ){
+    this.overlayView = this.overlayView || new google.maps.OverlayView()
+    
+    /* make into foo marker that AGM likes */
+      this.overlayView.iconUrl = " "//" "
+      this.overlayView.latitude = this.latitude
+      this.overlayView.longitude = this.longitude
+    /* end */
+
+    const latlng = new google.maps.LatLng(this.latitude,this.longitude)
+    const elm = this.template.nativeElement.children[0]
+
+    this.overlayView.remove = function(){
+      this.div.parentNode.removeChild(this.div);
+      delete this.div
+    }
+
+    this.overlayView.draw = function(){
+      if ( !this.div ) {
+        this.div = elm
+        this.getPanes().overlayImage.appendChild( elm )
+      }
+
+      const point = this.getProjection().fromLatLngToDivPixel( latlng )
+
+      if (point) {
+        elm.style.left = (point.x - 10) + 'px'
+        elm.style.top = (point.y - 20) + 'px'
+      }
+    }
+  }
+
+  /*promiseBounds():Promise<LatLngBounds>{
     return this._mapsWrapper.getNativeMap()
     .then(map=>{
       let bounds = map.getBounds() || map['bounds']
@@ -80,32 +133,5 @@ declare var google: any
         setTimeout(()=>map.setZoom(zoom), 60)//reset the zoom the bounds steals
       }
     })
-  }
-
-  drawOnMap( map:GoogleMap ){
-    this.overlayView = this.overlayView || new google.maps.OverlayView()
-    const latlng = new google.maps.LatLng(this.latitude,this.longitude)
-    const elm = this.template.nativeElement.children[0]
-
-    this.overlayView.remove = function(){
-        this.div.parentNode.removeChild(this.div);
-        delete this.div
-    }
-
-    this.overlayView.draw = function(){
-      if ( !this.div ) {
-        this.div = elm
-        this.getPanes().overlayImage.appendChild( elm )
-      }
-
-      const point = this.getProjection().fromLatLngToDivPixel( latlng )
-
-      if (point) {
-        elm.style.left = (point.x - 10) + 'px'
-        elm.style.top = (point.y - 20) + 'px'
-      }
-    }
-    
-    this.overlayView.setMap( map )//igniter to append to element
-  }
+  }*/
 }

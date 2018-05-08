@@ -87,8 +87,13 @@ declare var google: any
     })
     .then(nativeMarker=>{
       const setMap = nativeMarker.setMap
+<<<<<<< HEAD
 
+=======
+      console.log(1)
+>>>>>>> 5c39f3dcfd12104f3b8c9b24a12979b1cb49abcf
       if( nativeMarker['map'] ){
+        console.log(2)
         this.overlayView.setMap( nativeMarker['map'] )
       }
 

@@ -41,7 +41,9 @@ var AgmOverlay = (function () {
         })
             .then(function (nativeMarker) {
             var setMap = nativeMarker.setMap;
+            console.log(1);
             if (nativeMarker['map']) {
+                console.log(2);
                 _this.overlayView.setMap(nativeMarker['map']);
             }
             nativeMarker.setMap = function (map) {

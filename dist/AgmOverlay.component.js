@@ -10,6 +10,7 @@ var AgmOverlay = (function () {
     }
     AgmOverlay.prototype.ngAfterViewInit = function () {
         var _this = this;
+        this.elmGuts = this.template.nativeElement.children[0];
         this.load().then(function () {
             _this.onChanges = _this.onChangesOverride;
         });
@@ -19,8 +20,12 @@ var AgmOverlay = (function () {
     };
     AgmOverlay.prototype.onChanges = function (changes) { };
     AgmOverlay.prototype.onChangesOverride = function (changes) {
+        var _this = this;
         if ((changes.latitude || changes.longitude)) {
-            this.overlayView.draw();
+            this.overlayView.latitude = this.latitude;
+            this.overlayView.longitude = this.longitude;
+            this._markerManager.deleteMarker(this.overlayView)
+                .then(function () { return _this.load(); });
         }
     };
     AgmOverlay.prototype.ngOnDestroy = function () {
@@ -30,6 +35,7 @@ var AgmOverlay = (function () {
         this._markerManager.deleteMarker(this.overlayView);
         this.overlayView.setMap(null);
         delete this.overlayView;
+        delete this.elmGuts;
     };
     AgmOverlay.prototype.load = function () {
         var _this = this;
@@ -41,9 +47,7 @@ var AgmOverlay = (function () {
         })
             .then(function (nativeMarker) {
             var setMap = nativeMarker.setMap;
-            console.log(1);
             if (nativeMarker['map']) {
-                console.log(2);
                 _this.overlayView.setMap(nativeMarker['map']);
             }
             nativeMarker.setMap = function (map) {
@@ -59,18 +63,27 @@ var AgmOverlay = (function () {
         this.overlayView.iconUrl = " ";
         this.overlayView.latitude = this.latitude;
         this.overlayView.longitude = this.longitude;
-        var latlng = new google.maps.LatLng(this.latitude, this.longitude);
-        var elm = this.template.nativeElement.children[0];
+        var elm = this.elmGuts;
         this.overlayView.remove = function () {
             this.div.parentNode.removeChild(this.div);
             delete this.div;
         };
+        this.overlayView.getDiv = function () {
+            return this.div;
+        };
         this.overlayView.draw = function () {
             if (!this.div) {
                 this.div = elm;
-                this.getPanes().overlayImage.appendChild(elm);
+                var panes = this.getPanes();
+                if (!panes || !panes.overlayImage)
+                    return;
+                panes.overlayImage.appendChild(elm);
             }
-            var point = this.getProjection().fromLatLngToDivPixel(latlng);
+            var latlng = new google.maps.LatLng(this.latitude, this.longitude);
+            var proj = this.getProjection();
+            if (!proj)
+                return;
+            var point = proj.fromLatLngToDivPixel(latlng);
             if (point) {
                 elm.style.left = (point.x - 10) + 'px';
                 elm.style.top = (point.y - 20) + 'px';

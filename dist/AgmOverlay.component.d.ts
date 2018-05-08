@@ -4,6 +4,7 @@ export declare class AgmOverlay {
     protected _mapsWrapper: GoogleMapsAPIWrapper;
     private _markerManager;
     overlayView: any;
+    elmGuts: any;
     latitude: number;
     longitude: number;
     visible: boolean;

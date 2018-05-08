@@ -36,14 +36,17 @@ var AppComponent = (function () {
     function AppComponent() {
         this.version = packJson['version'];
         this.latLngArray = [
-            { latitude: 26.368755, longitude: -80.137413 },
-            { latitude: 26.368351, longitude: -80.128873 },
-            { latitude: 26.368092, longitude: -80.125011 }
+            { title: '0', latitude: 26.368755, longitude: -80.137413 },
+            { title: '1', latitude: 26.368351, longitude: -80.128873 },
+            { title: '2', latitude: 26.368092, longitude: -80.125011 }
         ];
     }
     AppComponent.prototype.setLatLngArrayString = function (string) {
         var json = JSON.parse(string);
         this.latLngArray = json;
+    };
+    AppComponent.prototype.toNumber = function (value) {
+        return Number(value);
     };
     AppComponent = __decorate([
         core_1.Component({
@@ -107,7 +110,7 @@ exports.AppModule = AppModule;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.template = "\n<table cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" style=\"width:100%;height:100%\">\n  <tr>\n    <td valign=\"top\">\n      <div style=\"float:right;font-size:.8em;\">v{{version}}</div>\n      <h2 style=\"margin:0;\">\uD83D\uDCA5 agm-overlay</h2>\n      <div style=\"text-align:center;font-size:.8em;\">\n        <a href=\"https://github.com/AckerApple/agm-overlays/blob/master/example/src/app.component.ts\">view component</a>\n        &nbsp;\n        <a href=\"https://github.com/AckerApple/agm-overlays/blob/master/example/src/app.template.ts\">view template</a>\n        &nbsp;\n        <a href=\"javascript:\" (click)=\"view=view==='data'?null:'data'\">{{!view?'play':'done'}} with data <sup>({{latLngArray.length}})</sup></a>\n        &nbsp;\n        <a href=\"javascript:\" (click)=\"destroyMap=!destroyMap\">{{destroyMap?'restore':'destroy'}} map</a>\n      </div>\n    </td>\n  </tr>\n  <tr *ngIf=\"!destroyMap\">\n    <td [style.height]=\"view ? '50%' : '100%'\">\n      <agm-map\n        [zoom] = \"14\"\n        style  = \"height:100%;width:100%;display:block;\"\n        [latitude]  = \"latLngArray.length ? latLngArray[0].latitude : null\"\n        [longitude] = \"latLngArray.length ? latLngArray[0].longitude : null\"\n      >\n        <agm-marker-cluster imagePath=\"https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m\">\n          <agm-overlay\n            *ngFor      = \"let item of latLngArray;let i=index\"\n            [latitude]  = \"item.latitude\"\n            [longitude] = \"item.longitude\"\n          >\n            <!-- blue html square -->\n            <div class=\"block\">\n              <strong style=\"color:white;\">{{i}}</strong>\n            </div>\n          </agm-overlay>\n        </agm-marker-cluster>\n      </agm-map>\n    </td>\n  </tr>\n  <tr *ngIf=\"view==='data'\">\n    <td style=\"height:50%\">\n      <textarea (change)=\"setLatLngArrayString($event.target.value)\" style=\"width:100%;height:100%\" wrap=\"on\">{{ latLngArray | json }}</textArea>\n    </td>\n  </tr>\n</table>\n";
+exports.template = "\n<table cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" style=\"width:100%;height:100%\">\n  <tr>\n    <td valign=\"top\" colspan=\"2\">\n      <div style=\"float:right;font-size:.8em;\">v{{version}}</div>\n      <h2 style=\"margin:0;\">\uD83D\uDCA5 agm-overlay</h2>\n      <div style=\"text-align:center;font-size:.8em;\">\n        <a href=\"https://github.com/AckerApple/agm-overlays/blob/master/example/src/app.component.ts\">view component</a>\n        &nbsp;\n        <a href=\"https://github.com/AckerApple/agm-overlays/blob/master/example/src/app.template.ts\">view template</a>\n        &nbsp;\n        <a href=\"javascript:\" (click)=\"view=view==='data'?null:'data'\">{{!view?'play':'done'}} with data <sup>({{latLngArray.length}})</sup></a>\n        &nbsp;\n        <a href=\"javascript:\" (click)=\"destroyMap=!destroyMap\">{{destroyMap?'restore':'destroy'}} map</a>\n      </div>\n    </td>\n  </tr>\n  <tr *ngIf=\"!destroyMap\">\n    <td [style.height]=\"view ? '50%' : '100%'\" colspan=\"2\">\n      <agm-map\n        [zoom] = \"14\"\n        style  = \"height:100%;width:100%;display:block;\"\n        [latitude]  = \"latLngArray.length ? latLngArray[0].latitude : null\"\n        [longitude] = \"latLngArray.length ? latLngArray[0].longitude : null\"\n      >\n        <agm-marker-cluster imagePath=\"https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m\">\n          <agm-overlay\n            *ngFor      = \"let item of latLngArray;let i=index\"\n            [latitude]  = \"item.latitude\"\n            [longitude] = \"item.longitude\"\n          >\n            <!-- blue html square -->\n            <div class=\"block\">\n              <strong style=\"color:white;\">{{item.title}}</strong>\n            </div>\n          </agm-overlay>\n        </agm-marker-cluster>\n      </agm-map>\n    </td>\n  </tr>\n  <tr *ngIf=\"view==='data'\">\n    <td style=\"height:50%\">\n      <textarea (change)=\"setLatLngArrayString($event.target.value)\" style=\"width:100%;height:100%\" wrap=\"on\">{{ latLngArray | json }}</textArea>\n    </td>\n    <td valign=\"top\">\n      <div><strong>Edit Marker</strong></div>\n      <select (change)=\"markerEdit=latLngArray[$event.target.value]\" style=\"width:100%\">\n        <option></option>\n        <option *ngFor=\"let item of latLngArray;let i = index\" [value]=\"i\">\n          Marker {{i}}\n        </option>\n      </select>\n      <ng-container *ngIf=\"markerEdit\">\n        <div><strong>Latitude</strong></div>\n        <input type=\"number\" [value]=\"markerEdit.latitude\" (change)=\"markerEdit.latitude=toNumber($event.target.value)\" style=\"width:100%\"/>\n        <div><strong>Longitude</strong></div>\n        <input type=\"number\" [value]=\"markerEdit.longitude\" (change)=\"markerEdit.longitude=toNumber($event.target.value)\" style=\"width:100%\"/>\n        <div><strong>Title</strong></div>\n        <input type=\"text\" [value]=\"markerEdit.title\" (change)=\"markerEdit.title=$event.target.value\" style=\"width:100%\"/>\n      </ng-container>\n    </td>\n  </tr>\n</table>\n";
 
 
 /***/ }),
@@ -162,6 +165,8 @@ var AgmOverlay = (function () {
     }
     AgmOverlay.prototype.ngAfterViewInit = function () {
         var _this = this;
+        // js-marker-clusterer does not support updating positions. We are forced to delete/add and compensate for .removeChild calls
+        this.elmGuts = this.template.nativeElement.children[0];
         this.load().then(function () {
             _this.onChanges = _this.onChangesOverride;
         });
@@ -171,8 +176,12 @@ var AgmOverlay = (function () {
     };
     AgmOverlay.prototype.onChanges = function (changes) { };
     AgmOverlay.prototype.onChangesOverride = function (changes) {
+        var _this = this;
         if ((changes.latitude || changes.longitude)) {
-            this.overlayView.draw();
+            this.overlayView.latitude = this.latitude;
+            this.overlayView.longitude = this.longitude;
+            this._markerManager.deleteMarker(this.overlayView)
+                .then(function () { return _this.load(); });
         }
     };
     AgmOverlay.prototype.ngOnDestroy = function () {
@@ -182,6 +191,7 @@ var AgmOverlay = (function () {
         this._markerManager.deleteMarker(this.overlayView);
         this.overlayView.setMap(null);
         delete this.overlayView;
+        delete this.elmGuts;
     };
     AgmOverlay.prototype.load = function () {
         var _this = this;
@@ -201,9 +211,7 @@ var AgmOverlay = (function () {
         })
             .then(function (nativeMarker) {
             var setMap = nativeMarker.setMap;
-            console.log(1);
             if (nativeMarker['map']) {
-                console.log(2);
                 _this.overlayView.setMap(nativeMarker['map']);
             }
             nativeMarker.setMap = function (map) {
@@ -221,18 +229,28 @@ var AgmOverlay = (function () {
         this.overlayView.latitude = this.latitude;
         this.overlayView.longitude = this.longitude;
         /* end */
-        var latlng = new google.maps.LatLng(this.latitude, this.longitude);
-        var elm = this.template.nativeElement.children[0];
+        var elm = this.elmGuts;
         this.overlayView.remove = function () {
             this.div.parentNode.removeChild(this.div);
             delete this.div;
         };
+        this.overlayView.getDiv = function () {
+            return this.div;
+        };
         this.overlayView.draw = function () {
             if (!this.div) {
                 this.div = elm;
-                this.getPanes().overlayImage.appendChild(elm);
+                var panes = this.getPanes();
+                // if no panes then assumed not on map
+                if (!panes || !panes.overlayImage)
+                    return;
+                panes.overlayImage.appendChild(elm);
             }
-            var point = this.getProjection().fromLatLngToDivPixel(latlng);
+            var latlng = new google.maps.LatLng(this.latitude, this.longitude);
+            var proj = this.getProjection();
+            if (!proj)
+                return;
+            var point = proj.fromLatLngToDivPixel(latlng);
             if (point) {
                 elm.style.left = (point.x - 10) + 'px';
                 elm.style.top = (point.y - 20) + 'px';

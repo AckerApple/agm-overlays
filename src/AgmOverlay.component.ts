@@ -18,10 +18,11 @@ declare var google: any
   template:'<div #content><div style="position:absolute"><ng-content></ng-content></div></div>'
 }) export class AgmOverlay{
   overlayView:any
+  elmGuts:any
   @Input() latitude:number
   @Input() longitude:number
   @Input() visible: boolean = true
-  
+
   @ViewChild('content', { read: ElementRef }) template: ElementRef
 
   constructor(
@@ -30,6 +31,9 @@ declare var google: any
   ){}
 
   ngAfterViewInit(){
+    // js-marker-clusterer does not support updating positions. We are forced to delete/add and compensate for .removeChild calls
+    this.elmGuts = this.template.nativeElement.children[0]
+
     this.load().then(()=>{
       this.onChanges = this.onChangesOverride
     })
@@ -43,7 +47,13 @@ declare var google: any
 
   onChangesOverride( changes ){
     if( (changes.latitude || changes.longitude) ){
-      this.overlayView.draw()
+      this.overlayView.latitude = this.latitude
+      this.overlayView.longitude = this.longitude
+
+      this._markerManager.deleteMarker(<any>this.overlayView)
+      .then(()=>this.load())
+
+
     }
   }
 
@@ -55,6 +65,7 @@ declare var google: any
     this._markerManager.deleteMarker( this.overlayView )
     this.overlayView.setMap(null)
     delete this.overlayView
+    delete this.elmGuts
   }
 
   load():Promise<void>{
@@ -63,7 +74,7 @@ declare var google: any
       const overlay = this.getOverlay( map )
 
       this._markerManager.addMarker( <any>overlay )
-      
+
       return this._markerManager.getNativeMarker( overlay )
       /* bounds */
       /*
@@ -76,14 +87,14 @@ declare var google: any
     })
     .then(nativeMarker=>{
       const setMap = nativeMarker.setMap
-      
+
       if( nativeMarker['map'] ){
         this.overlayView.setMap( nativeMarker['map'] )
       }
 
       nativeMarker.setMap = (map)=>{
         setMap.call(nativeMarker,map)
-        
+
         if( this.overlayView ){
           this.overlayView.setMap(map)
         }
@@ -93,28 +104,39 @@ declare var google: any
 
   getOverlay( map ){
     this.overlayView = this.overlayView || new google.maps.OverlayView()
-    
+
     /* make into foo marker that AGM likes */
       this.overlayView.iconUrl = " "//" "
       this.overlayView.latitude = this.latitude
       this.overlayView.longitude = this.longitude
     /* end */
-
-    const latlng = new google.maps.LatLng(this.latitude,this.longitude)
-    const elm = this.template.nativeElement.children[0]
+    const elm = this.elmGuts
 
     this.overlayView.remove = function(){
       this.div.parentNode.removeChild(this.div);
       delete this.div
     }
 
+    this.overlayView.getDiv = function(){
+      return this.div
+    }
+
     this.overlayView.draw = function(){
       if ( !this.div ) {
         this.div = elm
-        this.getPanes().overlayImage.appendChild( elm )
+        const panes = this.getPanes()
+        // if no panes then assumed not on map
+        if(!panes || !panes.overlayImage)return
+
+        panes.overlayImage.appendChild( elm )
       }
 
-      const point = this.getProjection().fromLatLngToDivPixel( latlng )
+      const latlng = new google.maps.LatLng(this.latitude,this.longitude)
+
+      const proj = this.getProjection()
+      if(!proj)return
+
+      const point = proj.fromLatLngToDivPixel( latlng )
 
       if (point) {
         elm.style.left = (point.x - 10) + 'px'

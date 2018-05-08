@@ -76,8 +76,9 @@ declare var google: any
     })
     .then(nativeMarker=>{
       const setMap = nativeMarker.setMap
-      
+      console.log(1)
       if( nativeMarker['map'] ){
+        console.log(2)
         this.overlayView.setMap( nativeMarker['map'] )
       }
 

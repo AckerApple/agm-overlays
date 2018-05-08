@@ -71867,7 +71867,6 @@ MarkerClusterer.prototype.removeMarker_ = function(marker) {
     // Marker is not in our list of markers.
     return false;
   }
-
   marker.setMap(null);
 
   this.markers_.splice(index, 1);

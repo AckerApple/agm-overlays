@@ -2,6 +2,7 @@
 - All notable changes to this project will be documented here.
 
 ## [1.1.2] - 2018-05-07
+- Fixed github issue for updating a lat long of existing marker
 - Made overlays communicate with AGM's MarkerManager
 - Now custom overlays can work with agm's cluster manager
 - Created example of clustering

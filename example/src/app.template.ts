@@ -34,7 +34,15 @@ export const template =
             <div class="block">
               <strong style="color:white;">{{item.title}}</strong>
             </div>
+            <agm-info-window>Info Window {{i}}</agm-info-window>
           </agm-overlay>
+          <agm-marker
+            *ngFor      = "let item of latLngArray;let i=index"
+            [latitude]  = "item.latitude - 0.01"
+            [longitude] = "item.longitude - 0.01"
+          >
+            <agm-info-window>Info Window {{i}}</agm-info-window>
+          </agm-marker>
         </agm-marker-cluster>
       </agm-map>
     </td>

@@ -1,6 +1,9 @@
 ## CHANGE LOG
 - All notable changes to this project will be documented here.
 
+## [1.1.3] - 2018-05-16
+- Added in agm-info-window compatibility
+
 ## [1.1.2] - 2018-05-07
 - Fixed github issue for updating a lat long of existing marker
 - Made overlays communicate with AGM's MarkerManager

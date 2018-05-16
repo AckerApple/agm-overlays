@@ -1,8 +1,9 @@
 import { Subscription } from "rxjs"
 
 import {
-  Input, Component, EventEmitter,
-  TemplateRef, ViewChild, ElementRef, QueryList
+  Input, Component, Output, EventEmitter,
+  TemplateRef, ViewChild, ElementRef, QueryList,
+  ContentChildren
 } from "@angular/core"
 
 import {
@@ -19,9 +20,20 @@ declare var google: any
 }) export class AgmOverlay{
   overlayView:any
   elmGuts:any
+  private _observableSubscriptions: Subscription[] = [];
+  
   @Input() latitude:number
   @Input() longitude:number
+  
   @Input() visible: boolean = true
+  @Input() zIndex: number = 1
+  
+  @Output() markerClick: EventEmitter<void> = new EventEmitter<void>()
+  @Input() openInfoWindow: boolean = true
+  @ContentChildren(AgmInfoWindow) infoWindow: QueryList<AgmInfoWindow> = new QueryList<AgmInfoWindow>()
+
+  //TODO, implement this
+  @Input('markerDraggable') draggable: boolean = false
 
   @ViewChild('content', { read: ElementRef }) template: ElementRef
 
@@ -34,9 +46,19 @@ declare var google: any
     // js-marker-clusterer does not support updating positions. We are forced to delete/add and compensate for .removeChild calls
     this.elmGuts = this.template.nativeElement.children[0]
 
+    //remove reference of info windows
+    const iWins = this.template.nativeElement.getElementsByTagName('agm-info-window')
+    for(let x=iWins.length-1; x >= 0; --x){
+      iWins[x].parentNode.removeChild(iWins[x])
+    }
+
     this.load().then(()=>{
       this.onChanges = this.onChangesOverride
     })
+  }
+  
+  ngAfterContentInit() {
+    this.infoWindow.changes.subscribe(() => this.handleInfoWindowUpdate());
   }
 
   ngOnChanges( changes ){
@@ -52,8 +74,6 @@ declare var google: any
 
       this._markerManager.deleteMarker(<any>this.overlayView)
       .then(()=>this.load())
-
-
     }
   }
 
@@ -64,8 +84,19 @@ declare var google: any
   destroy(){
     this._markerManager.deleteMarker( this.overlayView )
     this.overlayView.setMap(null)
+    this._observableSubscriptions.forEach((s) => s.unsubscribe())
     delete this.overlayView
     delete this.elmGuts
+  }
+  
+  private handleInfoWindowUpdate() {
+    if (this.infoWindow.length > 1) {
+      throw new Error('Expected no more than one info window.');
+    }
+    
+    this.infoWindow.forEach(iWin => {
+      iWin.hostMarker = <any>this.overlayView
+    });
   }
 
   load():Promise<void>{
@@ -74,16 +105,9 @@ declare var google: any
       const overlay = this.getOverlay( map )
 
       this._markerManager.addMarker( <any>overlay )
+      this._addEventListeners()
 
       return this._markerManager.getNativeMarker( overlay )
-      /* bounds */
-      /*
-      const latlng = new google.maps.LatLng(this.latitude, this.longitude)
-
-      // configures the bounds of the map to fit the markers
-      this.addBounds( latlng, map )
-      */
-      /* end:bounds */
     })
     .then(nativeMarker=>{
       const setMap = nativeMarker.setMap
@@ -112,6 +136,7 @@ declare var google: any
     const elm = this.elmGuts
 
     this.overlayView.remove = function(){
+      if(!this.div)return
       this.div.parentNode.removeChild(this.div);
       delete this.div
     }
@@ -143,31 +168,25 @@ declare var google: any
       }
     }
 
+    elm.addEventListener("click", event=>this.handleTap())
+
+    this.handleInfoWindowUpdate()
+
     return this.overlayView
   }
 
-  /*promiseBounds():Promise<LatLngBounds>{
-    return this._mapsWrapper.getNativeMap()
-    .then(map=>{
-      let bounds = map.getBounds() || map['bounds']
-      if( !bounds ){
-        bounds = new google.maps.LatLngBounds()
-        map['bounds'] = bounds
-      }
-      return bounds
-    })
+  handleTap(){
+    if (this.openInfoWindow) {
+      this.infoWindow.forEach(infoWindow=>{
+        infoWindow.open()
+      })
+    }
+    this.markerClick.emit(null);
   }
 
-  addBounds( latlng:LatLng, map:GoogleMap ){
-    this.promiseBounds()
-    .then(bounds=>{
-      const zero = bounds.isEmpty()
-      bounds.extend( latlng )
-      if( !zero ){
-        const zoom = map.getZoom()
-        map.fitBounds( bounds )//center map on all overlays
-        setTimeout(()=>map.setZoom(zoom), 60)//reset the zoom the bounds steals
-      }
-    })
-  }*/
+  _addEventListeners(){
+    const eo = this._markerManager.createEventObservable('click', <any>this.overlayView)
+    const cs = eo.subscribe(() => this.handleTap())
+    this._observableSubscriptions.push(cs)
+  }
 }

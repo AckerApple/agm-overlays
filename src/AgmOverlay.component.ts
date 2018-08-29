@@ -68,9 +68,10 @@ declare var google: any
   onChanges( changes ){}
 
   onChangesOverride( changes ){
-    if( (changes.latitude || changes.longitude) ){
+    if( (changes.latitude || changes.longitude || changes.zIndex) ){
       this.overlayView.latitude = this.latitude
       this.overlayView.longitude = this.longitude
+      this.overlayView.zIndex = this.zIndex
 
       this._markerManager.deleteMarker(<any>this.overlayView)
       .then(()=>this.load())

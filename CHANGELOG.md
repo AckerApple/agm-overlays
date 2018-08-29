@@ -1,6 +1,10 @@
 ## CHANGE LOG
 - All notable changes to this project will be documented here.
 
+## [1.2.0] - 2018-08-29
+- zIndex is watched for changes
+- All depencencies updated
+
 ## [1.1.3] - 2018-05-16
 - Added in agm-info-window compatibility
 

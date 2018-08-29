@@ -35,9 +35,10 @@ var AgmOverlay = (function () {
     AgmOverlay.prototype.onChanges = function (changes) { };
     AgmOverlay.prototype.onChangesOverride = function (changes) {
         var _this = this;
-        if ((changes.latitude || changes.longitude)) {
+        if (changes.latitude || changes.longitude || changes.zIndex) {
             this.overlayView.latitude = this.latitude;
             this.overlayView.longitude = this.longitude;
+            this.overlayView.zIndex = this.zIndex;
             this._markerManager.deleteMarker(this.overlayView)
                 .then(function () { return _this.load(); });
         }
@@ -142,19 +143,19 @@ var AgmOverlay = (function () {
                 },] },
     ];
     AgmOverlay.ctorParameters = function () { return [
-        { type: core_2.GoogleMapsAPIWrapper, },
-        { type: core_2.MarkerManager, },
+        { type: core_2.GoogleMapsAPIWrapper },
+        { type: core_2.MarkerManager }
     ]; };
     AgmOverlay.propDecorators = {
-        "latitude": [{ type: core_1.Input },],
-        "longitude": [{ type: core_1.Input },],
-        "visible": [{ type: core_1.Input },],
-        "zIndex": [{ type: core_1.Input },],
-        "markerClick": [{ type: core_1.Output },],
-        "openInfoWindow": [{ type: core_1.Input },],
-        "infoWindow": [{ type: core_1.ContentChildren, args: [core_2.AgmInfoWindow,] },],
-        "draggable": [{ type: core_1.Input, args: ['markerDraggable',] },],
-        "template": [{ type: core_1.ViewChild, args: ['content', { read: core_1.ElementRef },] },],
+        latitude: [{ type: core_1.Input }],
+        longitude: [{ type: core_1.Input }],
+        visible: [{ type: core_1.Input }],
+        zIndex: [{ type: core_1.Input }],
+        markerClick: [{ type: core_1.Output }],
+        openInfoWindow: [{ type: core_1.Input }],
+        infoWindow: [{ type: core_1.ContentChildren, args: [core_2.AgmInfoWindow,] }],
+        draggable: [{ type: core_1.Input, args: ['markerDraggable',] }],
+        template: [{ type: core_1.ViewChild, args: ['content', { read: core_1.ElementRef },] }]
     };
     return AgmOverlay;
 }());

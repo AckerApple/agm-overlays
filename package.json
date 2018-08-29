@@ -1,6 +1,6 @@
 {
   "name": "agm-overlays",
-  "version": "1.1.3",
+  "version": "1.2.0",
   "description": "Custom marker overlay for the @agm/core package",
   "main": "dist/index",
   "scripts": {
@@ -9,8 +9,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile:dist:package": "node scripts/update-dist-package.js",
     "start": "npm run watch",
-    "watch": "ng serve --port 4202 --output-hashing=none --sourcemaps=true --app=example --open",
-    "build:js": "ng build --output-hashing=none --sourcemaps=true --app=example"
+    "watch": "ng serve example --port 4202 --open",
+    "build:js": "ng build example"
   },
   "repository": {
     "type": "git",
@@ -31,20 +31,21 @@
   },
   "homepage": "https://github.com/ackerapple/agm-overlays#readme",
   "devDependencies": {
-    "@agm/core": "^1.0.0-beta.2",
-    "@agm/js-marker-clusterer": "^1.0.0-beta.2",
-    "@angular/cli": "^1.7.4",
-    "@angular/common": "^5.2.10",
-    "@angular/compiler": "^5.2.10",
-    "@angular/compiler-cli": "^5.2.10",
-    "@angular/core": "^5.2.10",
-    "@angular/platform-browser": "^5.2.10",
-    "@angular/platform-browser-dynamic": "^5.2.10",
+    "@agm/core": "^1.0.0-beta.3",
+    "@agm/js-marker-clusterer": "^1.0.0-beta.3",
+    "@angular-devkit/build-angular": "~0.7.0",
+    "@angular/cli": "^6.1.5",
+    "@angular/common": "^6.1.4",
+    "@angular/compiler": "^6.1.4",
+    "@angular/compiler-cli": "^6.1.4",
+    "@angular/core": "^6.1.4",
+    "@angular/platform-browser": "^6.1.4",
+    "@angular/platform-browser-dynamic": "^6.1.4",
     "js-marker-clusterer": "^1.0.0",
-    "npm-run-all": "^4.1.2",
+    "npm-run-all": "^4.1.3",
     "reflect-metadata": "^0.1.12",
-    "rxjs": "^5.5.10",
-    "typescript": "^2.4.2",
+    "rxjs": "^6.2.2",
+    "typescript": "^2.7.2",
     "zone.js": "^0.8.26"
   }
 }

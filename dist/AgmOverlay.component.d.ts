@@ -23,7 +23,7 @@ export declare class AgmOverlay {
     onChangesOverride(changes: any): void;
     ngOnDestroy(): void;
     destroy(): void;
-    private handleInfoWindowUpdate();
+    private handleInfoWindowUpdate;
     load(): Promise<void>;
     getOverlay(map: any): any;
     handleTap(): void;

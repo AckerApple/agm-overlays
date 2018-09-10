@@ -28,7 +28,9 @@ declare var google: any
   @Input() visible: boolean = true
   @Input() zIndex: number = 1
   
+  //TIP: Do NOT use this... Just put (click) on your html overlay element
   @Output() markerClick: EventEmitter<void> = new EventEmitter<void>()
+  
   @Input() openInfoWindow: boolean = true
   @ContentChildren(AgmInfoWindow) infoWindow: QueryList<AgmInfoWindow> = new QueryList<AgmInfoWindow>()
 

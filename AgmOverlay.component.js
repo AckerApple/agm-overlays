@@ -48,7 +48,9 @@ var AgmOverlay = (function () {
     };
     AgmOverlay.prototype.destroy = function () {
         this._markerManager.deleteMarker(this.overlayView);
-        this.overlayView.setMap(null);
+        if (this.overlayView) {
+            this.overlayView.setMap(null);
+        }
         this._observableSubscriptions.forEach(function (s) { return s.unsubscribe(); });
         delete this.overlayView;
         delete this.elmGuts;

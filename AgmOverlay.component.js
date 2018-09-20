@@ -16,7 +16,6 @@ var AgmOverlay = (function () {
     }
     AgmOverlay.prototype.ngAfterViewInit = function () {
         var _this = this;
-        this.elmGuts = this.template.nativeElement.children[0];
         var iWins = this.template.nativeElement.getElementsByTagName('agm-info-window');
         for (var x = iWins.length - 1; x >= 0; --x) {
             iWins[x].parentNode.removeChild(iWins[x]);
@@ -92,7 +91,7 @@ var AgmOverlay = (function () {
         this.overlayView.iconUrl = " ";
         this.overlayView.latitude = this.latitude;
         this.overlayView.longitude = this.longitude;
-        var elm = this.elmGuts;
+        var elm = this.elmGuts || this.template.nativeElement.children[0];
         this.overlayView.remove = function () {
             if (!this.div)
                 return;

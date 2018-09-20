@@ -45,9 +45,6 @@ declare var google: any
   ){}
 
   ngAfterViewInit(){
-    // js-marker-clusterer does not support updating positions. We are forced to delete/add and compensate for .removeChild calls
-    this.elmGuts = this.template.nativeElement.children[0]
-
     //remove reference of info windows
     const iWins = this.template.nativeElement.getElementsByTagName('agm-info-window')
     for(let x=iWins.length-1; x >= 0; --x){
@@ -141,7 +138,9 @@ declare var google: any
       this.overlayView.latitude = this.latitude
       this.overlayView.longitude = this.longitude
     /* end */
-    const elm = this.elmGuts
+    
+    // js-marker-clusterer does not support updating positions. We are forced to delete/add and compensate for .removeChild calls
+    const elm = this.elmGuts || this.template.nativeElement.children[0]
 
     this.overlayView.remove = function(){
       if(!this.div)return

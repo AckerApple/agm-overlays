@@ -49,8 +49,6 @@ var AgmOverlay = /** @class */ (function () {
     }
     AgmOverlay.prototype.ngAfterViewInit = function () {
         var _this = this;
-        // js-marker-clusterer does not support updating positions. We are forced to delete/add and compensate for .removeChild calls
-        this.elmGuts = this.template.nativeElement.children[0];
         //remove reference of info windows
         var iWins = this.template.nativeElement.getElementsByTagName('agm-info-window');
         for (var x = iWins.length - 1; x >= 0; --x) {
@@ -129,7 +127,8 @@ var AgmOverlay = /** @class */ (function () {
         this.overlayView.latitude = this.latitude;
         this.overlayView.longitude = this.longitude;
         /* end */
-        var elm = this.elmGuts;
+        // js-marker-clusterer does not support updating positions. We are forced to delete/add and compensate for .removeChild calls
+        var elm = this.elmGuts || this.template.nativeElement.children[0];
         this.overlayView.remove = function () {
             if (!this.div)
                 return;

@@ -1,6 +1,9 @@
 ## CHANGE LOG
 - All notable changes to this project will be documented here.
 
+## [1.2.1] - 2018-08-29
+- destory checks for var existense for errorless destory
+
 ## [1.2.0] - 2018-08-29
 - zIndex is watched for changes
 - All depencencies updated

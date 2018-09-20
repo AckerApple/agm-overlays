@@ -39,7 +39,7 @@ npm install agm-overlays --save-dev
 
 # Import
 ```typescript
-import { AgmOverlays } from "@agm-overlays"
+import { AgmOverlays } from "agm-overlays"
 import { NgModule } from "@angular/core"
 import { BrowserModule } from '@angular/platform-browser'
 
@@ -91,6 +91,7 @@ import { BrowserModule } from '@angular/platform-browser'
 # Clustering Demo
 Clustering is NOT a responsibility of this package, however it can be done
 
+[demo page](https://ackerapple.github.io/agm-overlays/)
 This demo uses [@agm/js-marker-clusterer](https://www.npmjs.com/package/@agm/js-marker-clusterer) to demonstrate how to do clustering
 
 ```html

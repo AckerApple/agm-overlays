@@ -86,8 +86,13 @@ declare var google: any
 
   destroy(){
     this._markerManager.deleteMarker( this.overlayView )
-    this.overlayView.setMap(null)
+    
+    if( this.overlayView ){
+      this.overlayView.setMap(null)
+    }
+    
     this._observableSubscriptions.forEach((s) => s.unsubscribe())
+    
     delete this.overlayView
     delete this.elmGuts
   }

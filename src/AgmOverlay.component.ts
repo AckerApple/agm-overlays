@@ -28,6 +28,11 @@ declare var google: any
   @Input() visible: boolean = true
   @Input() zIndex: number = 1
   
+  /*
+  * Make content div resize while zooming
+  */
+  @Input() resize: boolean = true;
+
   //TIP: Do NOT use this... Just put (click) on your html overlay element
   @Output() markerClick: EventEmitter<void> = new EventEmitter<void>()
   
@@ -138,6 +143,10 @@ declare var google: any
       this.overlayView.latitude = this.latitude
       this.overlayView.longitude = this.longitude
     /* end */
+      this.overlayView.resize = this.resize;
+
+    const bounds = this.getLatLngBounds(this.latitude, this.longitude);
+    this.overlayView.bounds_ = bounds;
     
     // js-marker-clusterer does not support updating positions. We are forced to delete/add and compensate for .removeChild calls
     const elm = this.elmGuts || this.template.nativeElement.children[0]
@@ -152,7 +161,7 @@ declare var google: any
       return this.div
     }
 
-    this.overlayView.draw = function(){
+    this.overlayView.draw = function() {
       if ( !this.div ) {
         this.div = elm
         const panes = this.getPanes()
@@ -172,6 +181,21 @@ declare var google: any
       if (point) {
         elm.style.left = (point.x - 10) + 'px'
         elm.style.top = (point.y - 20) + 'px'
+      }
+
+      if (this.resize) {
+        // Resize the image's div to fit the indicated dimensions.
+        const sw = proj.fromLatLngToDivPixel(
+          this.bounds_.getSouthWest()
+        );
+        const ne = proj.fromLatLngToDivPixel(
+          this.bounds_.getNorthEast()
+        );
+  
+        this.div.style.left = sw.x + 'px';
+        this.div.style.top = ne.y + 'px';
+        this.div.children[0].style.width = ne.x - sw.x + 'px';
+        this.div.children[0].style.height = sw.y - ne.y + 'px';
       }
     }
 
@@ -195,5 +219,11 @@ declare var google: any
     const eo = this._markerManager.createEventObservable('click', <any>this.overlayView)
     const cs = eo.subscribe(() => this.handleTap())
     this._observableSubscriptions.push(cs)
+  }
+
+  private getLatLngBounds(latitude: number, longitude: number): any {
+    return new google.maps.LatLngBounds(
+      new google.maps.LatLng(latitude - 0.001, longitude - 0.0013),
+      new google.maps.LatLng(latitude + 0.001, longitude + 0.0013));
   }
 }

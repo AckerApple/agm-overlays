@@ -29,6 +29,7 @@ export const template =
             *ngFor      = "let item of latLngArray;let i=index"
             [latitude]  = "item.latitude"
             [longitude] = "item.longitude"
+            [bounds] = "item.bounds"
           >
             <!-- blue html square -->
             <div class="block">

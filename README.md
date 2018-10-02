@@ -17,6 +17,7 @@ Custom marker overlay for the @agm/core package
 - [Install](#install)
 - [Import](#import)
 - [Usage](#usage)
+  - [Zoom Sizing](#zoom-sizing)
 - [Clustering Demo](#clustering-demo)
 - [Resources](#resources)
 - [Credits and Collaborators](#credits-and-collaborators)
@@ -87,6 +88,30 @@ import { BrowserModule } from '@angular/platform-browser'
   </agm-overlay>
 </agm-map>
 ```
+
+### Zoom Sizing
+By default, markers are always the same size regardless of zoom. Change that!
+
+> The following example expands the latitude(0.003) and the longitude(0.0052) in both directions
+
+```html
+<agm-map
+  [zoom] = "12"
+  style  = "height:300px;display:block;"
+  [latitude]  = "item.latitude"
+  [longitude] = "item.longitude"
+  [bounds] = "{x:{latitude:-0.003,longitude:-0.0052},y:{latitude:0.003,longitude:0.0052}}"
+>
+  <agm-overlay
+    [latitude]  = "item.latitude"
+    [longitude] = "item.longitude"
+  >
+    <!-- blue html square -->
+    <div style="width:15px;height:15px;background-color:blue;"></div>
+  </agm-overlay>
+</agm-map>
+```
+
 
 # Clustering Demo
 Clustering is NOT a responsibility of this package, however it can be done

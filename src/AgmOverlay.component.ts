@@ -27,11 +27,7 @@ declare var google: any
   
   @Input() visible: boolean = true
   @Input() zIndex: number = 1
-  
-  /*
-  * Make content div resize while zooming
-  */
-  @Input() resize: boolean = true;
+  @Input() bounds: {x: LatLng, y: LatLng} 
 
   //TIP: Do NOT use this... Just put (click) on your html overlay element
   @Output() markerClick: EventEmitter<void> = new EventEmitter<void>()
@@ -139,14 +135,17 @@ declare var google: any
     this.overlayView = this.overlayView || new google.maps.OverlayView()
 
     /* make into foo marker that AGM likes */
-      this.overlayView.iconUrl = " "//" "
-      this.overlayView.latitude = this.latitude
-      this.overlayView.longitude = this.longitude
+    this.overlayView.iconUrl = " "//" "
+    this.overlayView.latitude = this.latitude
+    this.overlayView.longitude = this.longitude
     /* end */
-      this.overlayView.resize = this.resize;
 
-    const bounds = this.getLatLngBounds(this.latitude, this.longitude);
-    this.overlayView.bounds_ = bounds;
+    if (this.bounds) {
+      this.overlayView.bounds_ = new google.maps.LatLngBounds(
+        new google.maps.LatLng(this.bounds.x.lat, this.bounds.x.lng),
+        new google.maps.LatLng(this.bounds.y.lat,  this.bounds.y.lng)
+      )
+    }
     
     // js-marker-clusterer does not support updating positions. We are forced to delete/add and compensate for .removeChild calls
     const elm = this.elmGuts || this.template.nativeElement.children[0]
@@ -171,31 +170,32 @@ declare var google: any
         panes.overlayImage.appendChild( elm )
       }
 
-      const latlng = new google.maps.LatLng(this.latitude,this.longitude)
+      // If you have a single point
+      if (this.latitude && this.longitude) {
+        const latlng = new google.maps.LatLng(this.latitude,this.longitude)
 
-      const proj = this.getProjection()
-      if(!proj)return
-
-      const point = proj.fromLatLngToDivPixel( latlng )
-
-      if (point) {
-        elm.style.left = (point.x - 10) + 'px'
-        elm.style.top = (point.y - 20) + 'px'
+        const proj = this.getProjection()
+        if(!proj)return
+  
+        const point = proj.fromLatLngToDivPixel( latlng )
+  
+        if (point && !this.bounds_) {
+          elm.style.left = (point.x - 10) + 'px'
+          elm.style.top = (point.y - 20) + 'px'
+        }
       }
 
-      if (this.resize) {
-        // Resize the image's div to fit the indicated dimensions.
-        const sw = proj.fromLatLngToDivPixel(
-          this.bounds_.getSouthWest()
-        );
-        const ne = proj.fromLatLngToDivPixel(
-          this.bounds_.getNorthEast()
-        );
+      // If you specify bounds
+      if (this.bounds_) {
+        // stretch content between two points leftbottom and righttop and resize
+        const proj = this.getProjection()
+        const sw = proj.fromLatLngToDivPixel(this.bounds_.getSouthWest())
+        const ne = proj.fromLatLngToDivPixel(this.bounds_.getNorthEast())
   
-        this.div.style.left = sw.x + 'px';
-        this.div.style.top = ne.y + 'px';
-        this.div.children[0].style.width = ne.x - sw.x + 'px';
-        this.div.children[0].style.height = sw.y - ne.y + 'px';
+        this.div.style.left = sw.x + 'px'
+        this.div.style.top = ne.y + 'px'
+        this.div.children[0].style.width = ne.x - sw.x + 'px'
+        this.div.children[0].style.height = sw.y - ne.y + 'px'
       }
     }
 
@@ -219,11 +219,5 @@ declare var google: any
     const eo = this._markerManager.createEventObservable('click', <any>this.overlayView)
     const cs = eo.subscribe(() => this.handleTap())
     this._observableSubscriptions.push(cs)
-  }
-
-  private getLatLngBounds(latitude: number, longitude: number): any {
-    return new google.maps.LatLngBounds(
-      new google.maps.LatLng(latitude - 0.001, longitude - 0.0013),
-      new google.maps.LatLng(latitude + 0.001, longitude + 0.0013));
   }
 }

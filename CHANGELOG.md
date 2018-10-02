@@ -1,6 +1,10 @@
 ## CHANGE LOG
 - All notable changes to this project will be documented here.
 
+## [1.3.0] - 2018-10-02
+- Added bounds for resizing overlays
+- Upgraded all dependencies
+
 ## [1.2.2] - 2018-09-20
 - destory checks for var existense for errorless destory
 - better establishing of targets

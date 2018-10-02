@@ -29,9 +29,10 @@ export const template =
             *ngFor      = "let item of latLngArray;let i=index"
             [latitude]  = "item.latitude"
             [longitude] = "item.longitude"
+            [bounds]    = "item.bounds"
           >
             <!-- blue html square -->
-            <div class="block">
+            <div class="block" [style.opacity]="item.opacity">
               <strong style="color:white;">{{item.title}}</strong>
             </div>
             <agm-info-window>Info Window {{i}}</agm-info-window>

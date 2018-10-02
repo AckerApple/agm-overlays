@@ -1,5 +1,18 @@
 import { EventEmitter, ElementRef, QueryList } from "@angular/core";
 import { AgmInfoWindow, MarkerManager, GoogleMapsAPIWrapper } from "@agm/core";
+export interface latLng {
+    latitude: number;
+    longitude: number;
+}
+export interface bounds {
+    x: latLng;
+    y: latLng;
+}
+export interface latLngPlus {
+    latitude: number;
+    longitude: number;
+    bounds?: bounds;
+}
 export declare class AgmOverlay {
     protected _mapsWrapper: GoogleMapsAPIWrapper;
     private _markerManager;
@@ -10,6 +23,7 @@ export declare class AgmOverlay {
     longitude: number;
     visible: boolean;
     zIndex: number;
+    bounds: bounds;
     markerClick: EventEmitter<void>;
     openInfoWindow: boolean;
     infoWindow: QueryList<AgmInfoWindow>;

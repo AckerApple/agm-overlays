@@ -16,6 +16,7 @@ var AgmOverlay = (function () {
     }
     AgmOverlay.prototype.ngAfterViewInit = function () {
         var _this = this;
+        console.log('this.bounds', this.bounds);
         var iWins = this.template.nativeElement.getElementsByTagName('agm-info-window');
         for (var x = iWins.length - 1; x >= 0; --x) {
             iWins[x].parentNode.removeChild(iWins[x]);
@@ -91,6 +92,9 @@ var AgmOverlay = (function () {
         this.overlayView.iconUrl = " ";
         this.overlayView.latitude = this.latitude;
         this.overlayView.longitude = this.longitude;
+        if (this.bounds) {
+            this.overlayView.bounds_ = new google.maps.LatLngBounds(new google.maps.LatLng(this.latitude + this.bounds.x.latitude, this.longitude + this.bounds.x.longitude), new google.maps.LatLng(this.latitude + this.bounds.y.latitude, this.longitude + this.bounds.y.longitude));
+        }
         var elm = this.elmGuts || this.template.nativeElement.children[0];
         this.overlayView.remove = function () {
             if (!this.div)
@@ -117,6 +121,15 @@ var AgmOverlay = (function () {
             if (point) {
                 elm.style.left = (point.x - 10) + 'px';
                 elm.style.top = (point.y - 20) + 'px';
+            }
+            if (this.bounds_) {
+                var proj_1 = this.getProjection();
+                var sw = proj_1.fromLatLngToDivPixel(this.bounds_.getSouthWest());
+                var ne = proj_1.fromLatLngToDivPixel(this.bounds_.getNorthEast());
+                this.div.style.left = sw.x + 'px';
+                this.div.style.top = ne.y + 'px';
+                this.div.children[0].style.width = ne.x - sw.x + 'px';
+                this.div.children[0].style.height = sw.y - ne.y + 'px';
             }
         };
         elm.addEventListener("click", function (event) { return _this.handleTap(); });
@@ -152,6 +165,7 @@ var AgmOverlay = (function () {
         longitude: [{ type: core_1.Input }],
         visible: [{ type: core_1.Input }],
         zIndex: [{ type: core_1.Input }],
+        bounds: [{ type: core_1.Input }],
         markerClick: [{ type: core_1.Output }],
         openInfoWindow: [{ type: core_1.Input }],
         infoWindow: [{ type: core_1.ContentChildren, args: [core_2.AgmInfoWindow,] }],

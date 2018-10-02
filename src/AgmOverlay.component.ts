@@ -14,6 +14,22 @@ import {
 import { GoogleMap } from "@agm/core/services/google-maps-types"
 declare var google: any
 
+export interface latLng{
+  latitude  : number
+  longitude : number
+}
+
+export interface bounds{
+  x: latLng//relative adjustment mathematics
+  y: latLng//relative adjustment mathematics
+} 
+
+export interface latLngPlus{
+  latitude  : number
+  longitude : number
+  bounds?   : bounds
+}
+
 @Component({
   selector:"agm-overlay",
   template:'<div #content><div style="position:absolute"><ng-content></ng-content></div></div>'
@@ -27,6 +43,7 @@ declare var google: any
   
   @Input() visible: boolean = true
   @Input() zIndex: number = 1
+  @Input() bounds:bounds
   
   //TIP: Do NOT use this... Just put (click) on your html overlay element
   @Output() markerClick: EventEmitter<void> = new EventEmitter<void>()
@@ -45,6 +62,7 @@ declare var google: any
   ){}
 
   ngAfterViewInit(){
+console.log('this.bounds',this.bounds)
     //remove reference of info windows
     const iWins = this.template.nativeElement.getElementsByTagName('agm-info-window')
     for(let x=iWins.length-1; x >= 0; --x){
@@ -134,11 +152,24 @@ declare var google: any
     this.overlayView = this.overlayView || new google.maps.OverlayView()
 
     /* make into foo marker that AGM likes */
-      this.overlayView.iconUrl = " "//" "
+      this.overlayView.iconUrl = " "
       this.overlayView.latitude = this.latitude
       this.overlayView.longitude = this.longitude
     /* end */
-    
+
+    if( this.bounds ){
+      this.overlayView.bounds_ = new google.maps.LatLngBounds(
+        new google.maps.LatLng(
+          this.latitude + this.bounds.x.latitude,
+          this.longitude + this.bounds.x.longitude
+        ),
+        new google.maps.LatLng(
+          this.latitude + this.bounds.y.latitude,
+          this.longitude + this.bounds.y.longitude
+        )
+      )
+    }
+
     // js-marker-clusterer does not support updating positions. We are forced to delete/add and compensate for .removeChild calls
     const elm = this.elmGuts || this.template.nativeElement.children[0]
 
@@ -172,6 +203,18 @@ declare var google: any
       if (point) {
         elm.style.left = (point.x - 10) + 'px'
         elm.style.top = (point.y - 20) + 'px'
+      }        
+
+      if( this.bounds_ ){
+        // stretch content between two points leftbottom and righttop and resize
+        const proj = this.getProjection()
+        const sw = proj.fromLatLngToDivPixel(this.bounds_.getSouthWest())
+        const ne = proj.fromLatLngToDivPixel(this.bounds_.getNorthEast())
+  
+        this.div.style.left = sw.x + 'px'
+        this.div.style.top = ne.y + 'px'
+        this.div.children[0].style.width = ne.x - sw.x + 'px'
+        this.div.children[0].style.height = sw.y - ne.y + 'px'
       }
     }
 

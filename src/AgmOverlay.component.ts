@@ -62,7 +62,6 @@ export interface latLngPlus{
   ){}
 
   ngAfterViewInit(){
-console.log('this.bounds',this.bounds)
     //remove reference of info windows
     const iWins = this.template.nativeElement.getElementsByTagName('agm-info-window')
     for(let x=iWins.length-1; x >= 0; --x){

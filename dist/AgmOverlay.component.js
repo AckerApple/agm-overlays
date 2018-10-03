@@ -16,7 +16,6 @@ var AgmOverlay = (function () {
     }
     AgmOverlay.prototype.ngAfterViewInit = function () {
         var _this = this;
-        console.log('this.bounds', this.bounds);
         var iWins = this.template.nativeElement.getElementsByTagName('agm-info-window');
         for (var x = iWins.length - 1; x >= 0; --x) {
             iWins[x].parentNode.removeChild(iWins[x]);

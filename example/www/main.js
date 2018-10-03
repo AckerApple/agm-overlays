@@ -49,7 +49,6 @@ var AgmOverlay = /** @class */ (function () {
     }
     AgmOverlay.prototype.ngAfterViewInit = function () {
         var _this = this;
-        console.log('this.bounds', this.bounds);
         //remove reference of info windows
         var iWins = this.template.nativeElement.getElementsByTagName('agm-info-window');
         for (var x = iWins.length - 1; x >= 0; --x) {

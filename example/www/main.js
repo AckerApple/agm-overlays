@@ -7,7 +7,7 @@
 /*! exports provided: name, version, description, main, scripts, repository, keywords, author, license, bugs, homepage, devDependencies, default */
 /***/ (function(module) {
 
-module.exports = {"name":"agm-overlays","version":"1.3.0","description":"Custom marker overlay for the @agm/core package","main":"dist/index","scripts":{"build":"npm-run-all build:dist compile:dist:package build:js","build:dist":"ngc --declaration --project src","test":"echo \"Error: no test specified\" && exit 1","compile:dist:package":"node scripts/update-dist-package.js","start":"npm run watch","watch":"ng serve example --port 4202 --open","build:js":"ng build example"},"repository":{"type":"git","url":"git+https://github.com/ackerapple/agm-overlays.git"},"keywords":["agm","overlay","custom","markers","google","maps"],"author":"Acker Apple","license":"MIT","bugs":{"url":"https://github.com/ackerapple/agm-overlays/issues"},"homepage":"https://github.com/ackerapple/agm-overlays#readme","devDependencies":{"@agm/core":"^1.0.0-beta.5","@agm/js-marker-clusterer":"^1.0.0-beta.5","@angular-devkit/build-angular":"^0.9.0-rc.1","@angular/cli":"^7.0.0-rc.1","@angular/common":"^6.1.9","@angular/compiler":"^6.1.9","@angular/compiler-cli":"^6.1.9","@angular/core":"^6.1.9","@angular/platform-browser":"^6.1.9","@angular/platform-browser-dynamic":"^6.1.9","js-marker-clusterer":"^1.0.0","npm-run-all":"^4.1.3","reflect-metadata":"^0.1.12","rxjs":"^6.3.3","typescript":"^2.9.2","zone.js":"^0.8.26"}};
+module.exports = {"name":"agm-overlays","version":"1.3.1","description":"Custom marker overlay for the @agm/core package","main":"dist/index","scripts":{"build":"npm-run-all build:dist compile:dist:package build:js","build:dist":"ngc --declaration --project src","test":"echo \"Error: no test specified\" && exit 1","compile:dist:package":"node scripts/update-dist-package.js","start":"npm run watch","watch":"ng serve example --port 4202 --open","build:js":"ng build example"},"repository":{"type":"git","url":"git+https://github.com/ackerapple/agm-overlays.git"},"keywords":["agm","overlay","custom","markers","google","maps"],"author":"Acker Apple","license":"MIT","bugs":{"url":"https://github.com/ackerapple/agm-overlays/issues"},"homepage":"https://github.com/ackerapple/agm-overlays#readme","devDependencies":{"@agm/core":"^1.0.0-beta.5","@agm/js-marker-clusterer":"^1.0.0-beta.5","@angular-devkit/build-angular":"^0.9.0-rc.1","@angular/cli":"^7.0.0-rc.1","@angular/common":"^6.1.9","@angular/compiler":"^6.1.9","@angular/compiler-cli":"^6.1.9","@angular/core":"^6.1.9","@angular/platform-browser":"^6.1.9","@angular/platform-browser-dynamic":"^6.1.9","js-marker-clusterer":"^1.0.0","npm-run-all":"^4.1.3","reflect-metadata":"^0.1.12","rxjs":"^6.3.3","typescript":"^2.9.2","zone.js":"^0.8.26"}};
 
 /***/ }),
 
@@ -37,7 +37,6 @@ var AgmOverlay = /** @class */ (function () {
     ) {
         this._mapsWrapper = _mapsWrapper;
         this._markerManager = _markerManager;
-        this._observableSubscriptions = [];
         this.visible = true;
         this.zIndex = 1;
         //TIP: Do NOT use this... Just put (click) on your html overlay element
@@ -46,6 +45,8 @@ var AgmOverlay = /** @class */ (function () {
         this.infoWindow = new core_1.QueryList();
         //TODO, implement this
         this.draggable = false;
+        //elmGuts:any
+        this._observableSubscriptions = [];
     }
     AgmOverlay.prototype.ngAfterViewInit = function () {
         var _this = this;
@@ -72,21 +73,25 @@ var AgmOverlay = /** @class */ (function () {
             this.overlayView.latitude = this.latitude;
             this.overlayView.longitude = this.longitude;
             this.overlayView.zIndex = this.zIndex;
-            this._markerManager.deleteMarker(this.overlayView)
-                .then(function () { return _this.load(); });
+            this.destroy().then(function () { return _this.load(); });
         }
     };
     AgmOverlay.prototype.ngOnDestroy = function () {
         this.destroy();
     };
     AgmOverlay.prototype.destroy = function () {
-        this._markerManager.deleteMarker(this.overlayView);
+        this.destroyed = true;
+        var promise = this._markerManager.deleteMarker(this.overlayView);
         if (this.overlayView) {
+            if (this.overlayView.div) {
+                this.overlayView.remove();
+            }
             this.overlayView.setMap(null);
         }
         this._observableSubscriptions.forEach(function (s) { return s.unsubscribe(); });
         delete this.overlayView;
-        delete this.elmGuts;
+        //delete this.elmGuts
+        return promise;
     };
     AgmOverlay.prototype.handleInfoWindowUpdate = function () {
         var _this = this;
@@ -131,11 +136,17 @@ var AgmOverlay = /** @class */ (function () {
             this.overlayView.bounds_ = new google.maps.LatLngBounds(new google.maps.LatLng(this.latitude + this.bounds.x.latitude, this.longitude + this.bounds.x.longitude), new google.maps.LatLng(this.latitude + this.bounds.y.latitude, this.longitude + this.bounds.y.longitude));
         }
         // js-marker-clusterer does not support updating positions. We are forced to delete/add and compensate for .removeChild calls
-        var elm = this.elmGuts || this.template.nativeElement.children[0];
+        var elm = this.template.nativeElement.children[0];
+        //const elm =  this.elmGuts || this.template.nativeElement.children[0]
+        //we must always be sure to steal our stolen element back incase we are just in middle of changes and will redraw
+        var restore = function (div) {
+            _this.template.nativeElement.appendChild(div);
+        };
         this.overlayView.remove = function () {
             if (!this.div)
                 return;
             this.div.parentNode.removeChild(this.div);
+            restore(this.div);
             delete this.div;
         };
         this.overlayView.getDiv = function () {

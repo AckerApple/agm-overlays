@@ -34,10 +34,6 @@ export interface latLngPlus{
   selector:"agm-overlay",
   template:'<div #content><div style="position:absolute"><ng-content></ng-content></div></div>'
 }) export class AgmOverlay{
-  overlayView:any
-  elmGuts:any
-  private _observableSubscriptions: Subscription[] = [];
-  
   @Input() latitude:number
   @Input() longitude:number
   
@@ -55,6 +51,11 @@ export interface latLngPlus{
   @Input('markerDraggable') draggable: boolean = false
 
   @ViewChild('content', { read: ElementRef }) template: ElementRef
+
+  destroyed:boolean
+  overlayView:any
+  //elmGuts:any
+  private _observableSubscriptions: Subscription[] = []
 
   constructor(
     protected _mapsWrapper: GoogleMapsAPIWrapper,
@@ -88,9 +89,7 @@ export interface latLngPlus{
       this.overlayView.latitude = this.latitude
       this.overlayView.longitude = this.longitude
       this.overlayView.zIndex = this.zIndex
-
-      this._markerManager.deleteMarker(<any>this.overlayView)
-      .then(()=>this.load())
+      this.destroy().then(()=>this.load())
     }
   }
 
@@ -98,17 +97,24 @@ export interface latLngPlus{
     this.destroy()
   }
 
-  destroy(){
-    this._markerManager.deleteMarker( this.overlayView )
+  destroy():Promise<any>{
+    this.destroyed = true
+
+    const promise = this._markerManager.deleteMarker( this.overlayView )
     
     if( this.overlayView ){
+      if( this.overlayView.div ){
+        this.overlayView.remove()
+      }
       this.overlayView.setMap(null)
     }
     
     this._observableSubscriptions.forEach((s) => s.unsubscribe())
     
     delete this.overlayView
-    delete this.elmGuts
+    //delete this.elmGuts
+
+    return promise
   }
   
   private handleInfoWindowUpdate() {
@@ -170,11 +176,18 @@ export interface latLngPlus{
     }
 
     // js-marker-clusterer does not support updating positions. We are forced to delete/add and compensate for .removeChild calls
-    const elm = this.elmGuts || this.template.nativeElement.children[0]
+    const elm = this.template.nativeElement.children[0]
+    //const elm =  this.elmGuts || this.template.nativeElement.children[0]
+
+    //we must always be sure to steal our stolen element back incase we are just in middle of changes and will redraw
+    const restore = (div)=>{
+      this.template.nativeElement.appendChild( div )
+    }
 
     this.overlayView.remove = function(){
       if(!this.div)return
       this.div.parentNode.removeChild(this.div);
+      restore( this.div )
       delete this.div
     }
 

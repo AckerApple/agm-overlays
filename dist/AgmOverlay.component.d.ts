@@ -16,9 +16,6 @@ export interface latLngPlus {
 export declare class AgmOverlay {
     protected _mapsWrapper: GoogleMapsAPIWrapper;
     private _markerManager;
-    overlayView: any;
-    elmGuts: any;
-    private _observableSubscriptions;
     latitude: number;
     longitude: number;
     visible: boolean;
@@ -29,6 +26,9 @@ export declare class AgmOverlay {
     infoWindow: QueryList<AgmInfoWindow>;
     draggable: boolean;
     template: ElementRef;
+    destroyed: boolean;
+    overlayView: any;
+    private _observableSubscriptions;
     constructor(_mapsWrapper: GoogleMapsAPIWrapper, _markerManager: MarkerManager);
     ngAfterViewInit(): void;
     ngAfterContentInit(): void;
@@ -36,7 +36,7 @@ export declare class AgmOverlay {
     onChanges(changes: any): void;
     onChangesOverride(changes: any): void;
     ngOnDestroy(): void;
-    destroy(): void;
+    destroy(): Promise<any>;
     private handleInfoWindowUpdate;
     load(): Promise<void>;
     getOverlay(map: any): any;

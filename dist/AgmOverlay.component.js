@@ -6,13 +6,13 @@ var AgmOverlay = (function () {
     function AgmOverlay(_mapsWrapper, _markerManager) {
         this._mapsWrapper = _mapsWrapper;
         this._markerManager = _markerManager;
-        this._observableSubscriptions = [];
         this.visible = true;
         this.zIndex = 1;
         this.markerClick = new core_1.EventEmitter();
         this.openInfoWindow = true;
         this.infoWindow = new core_1.QueryList();
         this.draggable = false;
+        this._observableSubscriptions = [];
     }
     AgmOverlay.prototype.ngAfterViewInit = function () {
         var _this = this;
@@ -38,21 +38,24 @@ var AgmOverlay = (function () {
             this.overlayView.latitude = this.latitude;
             this.overlayView.longitude = this.longitude;
             this.overlayView.zIndex = this.zIndex;
-            this._markerManager.deleteMarker(this.overlayView)
-                .then(function () { return _this.load(); });
+            this.destroy().then(function () { return _this.load(); });
         }
     };
     AgmOverlay.prototype.ngOnDestroy = function () {
         this.destroy();
     };
     AgmOverlay.prototype.destroy = function () {
-        this._markerManager.deleteMarker(this.overlayView);
+        this.destroyed = true;
+        var promise = this._markerManager.deleteMarker(this.overlayView);
         if (this.overlayView) {
+            if (this.overlayView.div) {
+                this.overlayView.remove();
+            }
             this.overlayView.setMap(null);
         }
         this._observableSubscriptions.forEach(function (s) { return s.unsubscribe(); });
         delete this.overlayView;
-        delete this.elmGuts;
+        return promise;
     };
     AgmOverlay.prototype.handleInfoWindowUpdate = function () {
         var _this = this;
@@ -94,11 +97,15 @@ var AgmOverlay = (function () {
         if (this.bounds) {
             this.overlayView.bounds_ = new google.maps.LatLngBounds(new google.maps.LatLng(this.latitude + this.bounds.x.latitude, this.longitude + this.bounds.x.longitude), new google.maps.LatLng(this.latitude + this.bounds.y.latitude, this.longitude + this.bounds.y.longitude));
         }
-        var elm = this.elmGuts || this.template.nativeElement.children[0];
+        var elm = this.template.nativeElement.children[0];
+        var restore = function (div) {
+            _this.template.nativeElement.appendChild(div);
+        };
         this.overlayView.remove = function () {
             if (!this.div)
                 return;
             this.div.parentNode.removeChild(this.div);
+            restore(this.div);
             delete this.div;
         };
         this.overlayView.getDiv = function () {

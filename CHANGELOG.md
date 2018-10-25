@@ -1,6 +1,9 @@
 ## CHANGE LOG
 - All notable changes to this project will be documented here.
 
+## [1.3.1] - 2018-10-25
+- Fix updating marker positions
+
 ## [1.3.0] - 2018-10-02
 - Added bounds for resizing overlays
 - Upgraded all dependencies

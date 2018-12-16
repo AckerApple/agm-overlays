@@ -20,8 +20,10 @@ export const points:exampleLatLng[] = [
     title:'2',
     latitude:26.368092,
     longitude:-80.125011
-  },
-  {
+  }
+]
+
+export const resizesPoint = {
     title:'resizes',
     opacity:.7,
     latitude:26.360000,
@@ -37,4 +39,3 @@ export const points:exampleLatLng[] = [
       }
     }
   }
-]

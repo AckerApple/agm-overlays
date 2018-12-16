@@ -1,7 +1,9 @@
 import { Component } from "@angular/core"
 import { template } from "./app.template"
 import * as packJson from "../../package.json"
-import { exampleLatLng, points } from "./points"
+import {
+  exampleLatLng, points, resizesPoint
+} from "./points"
 
 @Component({
   selector:"app",
@@ -13,6 +15,7 @@ import { exampleLatLng, points } from "./points"
   destroyMap:boolean
   version:string = packJson['version']
   latLngArray:exampleLatLng[] = points
+  resizesPoint:exampleLatLng = resizesPoint
 
   setLatLngArrayString( string:string ){
     const json = JSON.parse(string)

@@ -4,7 +4,7 @@ export const template =
   <tr>
     <td valign="top" colspan="2">
       <div style="float:right;font-size:.8em;">v{{version}}</div>
-      <h2 style="margin:0;">💥 agm-overlay</h2>
+      <h2 style="margin:0;">💥 agm-overlays</h2>
       <div style="text-align:center;font-size:.8em;">
         <a href="https://github.com/AckerApple/agm-overlays/blob/master/example/src/app.component.ts">view component</a>
         &nbsp;
@@ -37,6 +37,20 @@ export const template =
             </div>
             <agm-info-window>Info Window {{i}}</agm-info-window>
           </agm-overlay>
+
+          <agm-overlay
+            [latitude]  = "resizesPoint.latitude"
+            [longitude] = "resizesPoint.longitude"
+            [bounds]    = "resizesPoint.bounds"
+          >
+            <!-- blue html square -->
+            <div (click)="showAbsMenu=!showAbsMenu" class="block" [style.opacity]="resizesPoint.opacity">
+              <div *ngIf="showAbsMenu" style="position:absolute;padding:2em;background-color:white;">absolute menu</div>
+              <strong style="color:white;">{{resizesPoint.title}}</strong>
+            </div>
+          </agm-overlay>
+          
+          <!--regular markers demo along side-->
           <agm-marker
             *ngFor      = "let item of latLngArray;let i=index"
             [latitude]  = "item.latitude - 0.01"

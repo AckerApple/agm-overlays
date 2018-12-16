@@ -359,6 +359,7 @@ var AppComponent = /** @class */ (function () {
     function AppComponent() {
         this.version = packJson['version'];
         this.latLngArray = points_1.points;
+        this.resizesPoint = points_1.resizesPoint;
     }
     AppComponent.prototype.setLatLngArrayString = function (string) {
         var json = JSON.parse(string);
@@ -439,7 +440,7 @@ exports.AppModule = AppModule;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.template = "\n<table cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" style=\"width:100%;height:100%\">\n  <tr>\n    <td valign=\"top\" colspan=\"2\">\n      <div style=\"float:right;font-size:.8em;\">v{{version}}</div>\n      <h2 style=\"margin:0;\">\uD83D\uDCA5 agm-overlay</h2>\n      <div style=\"text-align:center;font-size:.8em;\">\n        <a href=\"https://github.com/AckerApple/agm-overlays/blob/master/example/src/app.component.ts\">view component</a>\n        &nbsp;\n        <a href=\"https://github.com/AckerApple/agm-overlays/blob/master/example/src/app.template.ts\">view template</a>\n        &nbsp;\n        <a href=\"javascript:\" (click)=\"view=view==='data'?null:'data'\">{{!view?'play':'done'}} with data <sup>({{latLngArray.length}})</sup></a>\n        &nbsp;\n        <a href=\"javascript:\" (click)=\"destroyMap=!destroyMap\">{{destroyMap?'restore':'destroy'}} map</a>\n      </div>\n    </td>\n  </tr>\n  <tr *ngIf=\"!destroyMap\">\n    <td [style.height]=\"view ? '50%' : '100%'\" colspan=\"2\">\n      <agm-map\n        [zoom] = \"14\"\n        style  = \"height:100%;width:100%;display:block;\"\n        [latitude]  = \"latLngArray.length ? latLngArray[0].latitude : null\"\n        [longitude] = \"latLngArray.length ? latLngArray[0].longitude : null\"\n      >\n        <agm-marker-cluster imagePath=\"https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m\">\n          <agm-overlay\n            *ngFor      = \"let item of latLngArray;let i=index\"\n            [latitude]  = \"item.latitude\"\n            [longitude] = \"item.longitude\"\n            [bounds]    = \"item.bounds\"\n          >\n            <!-- blue html square -->\n            <div class=\"block\" [style.opacity]=\"item.opacity\">\n              <strong style=\"color:white;\">{{item.title}}</strong>\n            </div>\n            <agm-info-window>Info Window {{i}}</agm-info-window>\n          </agm-overlay>\n          <agm-marker\n            *ngFor      = \"let item of latLngArray;let i=index\"\n            [latitude]  = \"item.latitude - 0.01\"\n            [longitude] = \"item.longitude - 0.01\"\n          >\n            <agm-info-window>Info Window {{i}}</agm-info-window>\n          </agm-marker>\n        </agm-marker-cluster>\n      </agm-map>\n    </td>\n  </tr>\n  <tr *ngIf=\"view==='data'\">\n    <td style=\"height:50%\">\n      <textarea (change)=\"setLatLngArrayString($event.target.value)\" style=\"width:100%;height:100%\" wrap=\"on\">{{ latLngArray | json }}</textArea>\n    </td>\n    <td valign=\"top\">\n      <div><strong>Edit Marker</strong></div>\n      <select (change)=\"markerEdit=latLngArray[$event.target.value]\" style=\"width:100%\">\n        <option></option>\n        <option *ngFor=\"let item of latLngArray;let i = index\" [value]=\"i\">\n          Marker {{i}}\n        </option>\n      </select>\n      <ng-container *ngIf=\"markerEdit\">\n        <div><strong>Latitude</strong></div>\n        <input type=\"number\" [value]=\"markerEdit.latitude\" (change)=\"markerEdit.latitude=toNumber($event.target.value)\" style=\"width:100%\"/>\n        <div><strong>Longitude</strong></div>\n        <input type=\"number\" [value]=\"markerEdit.longitude\" (change)=\"markerEdit.longitude=toNumber($event.target.value)\" style=\"width:100%\"/>\n        <div><strong>Title</strong></div>\n        <input type=\"text\" [value]=\"markerEdit.title\" (change)=\"markerEdit.title=$event.target.value\" style=\"width:100%\"/>\n      </ng-container>\n    </td>\n  </tr>\n</table>\n";
+exports.template = "\n<table cellPadding=\"0\" cellSpacing=\"0\" border=\"0\" style=\"width:100%;height:100%\">\n  <tr>\n    <td valign=\"top\" colspan=\"2\">\n      <div style=\"float:right;font-size:.8em;\">v{{version}}</div>\n      <h2 style=\"margin:0;\">\uD83D\uDCA5 agm-overlays</h2>\n      <div style=\"text-align:center;font-size:.8em;\">\n        <a href=\"https://github.com/AckerApple/agm-overlays/blob/master/example/src/app.component.ts\">view component</a>\n        &nbsp;\n        <a href=\"https://github.com/AckerApple/agm-overlays/blob/master/example/src/app.template.ts\">view template</a>\n        &nbsp;\n        <a href=\"javascript:\" (click)=\"view=view==='data'?null:'data'\">{{!view?'play':'done'}} with data <sup>({{latLngArray.length}})</sup></a>\n        &nbsp;\n        <a href=\"javascript:\" (click)=\"destroyMap=!destroyMap\">{{destroyMap?'restore':'destroy'}} map</a>\n      </div>\n    </td>\n  </tr>\n  <tr *ngIf=\"!destroyMap\">\n    <td [style.height]=\"view ? '50%' : '100%'\" colspan=\"2\">\n      <agm-map\n        [zoom] = \"14\"\n        style  = \"height:100%;width:100%;display:block;\"\n        [latitude]  = \"latLngArray.length ? latLngArray[0].latitude : null\"\n        [longitude] = \"latLngArray.length ? latLngArray[0].longitude : null\"\n      >\n        <agm-marker-cluster imagePath=\"https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m\">\n          <agm-overlay\n            *ngFor      = \"let item of latLngArray;let i=index\"\n            [latitude]  = \"item.latitude\"\n            [longitude] = \"item.longitude\"\n            [bounds]    = \"item.bounds\"\n          >\n            <!-- blue html square -->\n            <div class=\"block\" [style.opacity]=\"item.opacity\">\n              <strong style=\"color:white;\">{{item.title}}</strong>\n            </div>\n            <agm-info-window>Info Window {{i}}</agm-info-window>\n          </agm-overlay>\n\n          <agm-overlay\n            [latitude]  = \"resizesPoint.latitude\"\n            [longitude] = \"resizesPoint.longitude\"\n            [bounds]    = \"resizesPoint.bounds\"\n          >\n            <!-- blue html square -->\n            <div (click)=\"showAbsMenu=!showAbsMenu\" class=\"block\" [style.opacity]=\"resizesPoint.opacity\">\n              <div *ngIf=\"showAbsMenu\" style=\"position:absolute;padding:2em;background-color:white;\">absolute menu</div>\n              <strong style=\"color:white;\">{{resizesPoint.title}}</strong>\n            </div>\n          </agm-overlay>\n          \n          <!--regular markers demo along side-->\n          <agm-marker\n            *ngFor      = \"let item of latLngArray;let i=index\"\n            [latitude]  = \"item.latitude - 0.01\"\n            [longitude] = \"item.longitude - 0.01\"\n          >\n            <agm-info-window>Info Window {{i}}</agm-info-window>\n          </agm-marker>\n        </agm-marker-cluster>\n      </agm-map>\n    </td>\n  </tr>\n  <tr *ngIf=\"view==='data'\">\n    <td style=\"height:50%\">\n      <textarea (change)=\"setLatLngArrayString($event.target.value)\" style=\"width:100%;height:100%\" wrap=\"on\">{{ latLngArray | json }}</textArea>\n    </td>\n    <td valign=\"top\">\n      <div><strong>Edit Marker</strong></div>\n      <select (change)=\"markerEdit=latLngArray[$event.target.value]\" style=\"width:100%\">\n        <option></option>\n        <option *ngFor=\"let item of latLngArray;let i = index\" [value]=\"i\">\n          Marker {{i}}\n        </option>\n      </select>\n      <ng-container *ngIf=\"markerEdit\">\n        <div><strong>Latitude</strong></div>\n        <input type=\"number\" [value]=\"markerEdit.latitude\" (change)=\"markerEdit.latitude=toNumber($event.target.value)\" style=\"width:100%\"/>\n        <div><strong>Longitude</strong></div>\n        <input type=\"number\" [value]=\"markerEdit.longitude\" (change)=\"markerEdit.longitude=toNumber($event.target.value)\" style=\"width:100%\"/>\n        <div><strong>Title</strong></div>\n        <input type=\"text\" [value]=\"markerEdit.title\" (change)=\"markerEdit.title=$event.target.value\" style=\"width:100%\"/>\n      </ng-container>\n    </td>\n  </tr>\n</table>\n";
 
 
 /***/ }),
@@ -490,24 +491,24 @@ exports.points = [
         title: '2',
         latitude: 26.368092,
         longitude: -80.125011
-    },
-    {
-        title: 'resizes',
-        opacity: .7,
-        latitude: 26.360000,
-        longitude: -80.110000,
-        bounds: {
-            x: {
-                latitude: -0.003,
-                longitude: -0.0052
-            },
-            y: {
-                latitude: 0.003,
-                longitude: 0.0052
-            }
-        }
     }
 ];
+exports.resizesPoint = {
+    title: 'resizes',
+    opacity: .7,
+    latitude: 26.360000,
+    longitude: -80.110000,
+    bounds: {
+        x: {
+            latitude: -0.003,
+            longitude: -0.0052
+        },
+        y: {
+            latitude: 0.003,
+            longitude: 0.0052
+        }
+    }
+};
 
 
 /***/ }),

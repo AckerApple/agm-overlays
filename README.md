@@ -100,11 +100,11 @@ By default, markers are always the same size regardless of zoom. Change that!
   style  = "height:300px;display:block;"
   [latitude]  = "item.latitude"
   [longitude] = "item.longitude"
-  [bounds] = "{x:{latitude:-0.003,longitude:-0.0052},y:{latitude:0.003,longitude:0.0052}}"
 >
   <agm-overlay
     [latitude]  = "item.latitude"
     [longitude] = "item.longitude"
+    [bounds] = "{x:{latitude:-0.003,longitude:-0.0052},y:{latitude:0.003,longitude:0.0052}}"
   >
     <!-- blue html square -->
     <div style="width:15px;height:15px;background-color:blue;"></div>

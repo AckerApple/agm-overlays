@@ -200,9 +200,9 @@ export interface latLngPlus{
         this.div = elm
         const panes = this.getPanes()
         // if no panes then assumed not on map
-        if(!panes || !panes.overlayImage)return
+        if(!panes || !panes.overlayLayer)return
 
-        panes.overlayImage.appendChild( elm )
+        panes.overlayLayer.appendChild( elm )
       }
 
       const latlng = new google.maps.LatLng(this.latitude,this.longitude)

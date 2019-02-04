@@ -160,6 +160,7 @@ export interface latLngPlus{
       this.overlayView.iconUrl = " "
       this.overlayView.latitude = this.latitude
       this.overlayView.longitude = this.longitude
+      this.overlayView.visible = false;
     /* end */
 
     if( this.bounds ){

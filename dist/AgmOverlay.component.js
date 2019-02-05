@@ -115,9 +115,9 @@ var AgmOverlay = (function () {
             if (!this.div) {
                 this.div = elm;
                 var panes = this.getPanes();
-                if (!panes || !panes.overlayImage)
+                if (!panes || !panes.overlayLayer)
                     return;
-                panes.overlayImage.appendChild(elm);
+                panes.overlayLayer.appendChild(elm);
             }
             var latlng = new google.maps.LatLng(this.latitude, this.longitude);
             var proj = this.getProjection();

@@ -37,7 +37,7 @@ export interface latLngPlus{
   @Input() latitude:number
   @Input() longitude:number
   
-  @Input() visible: boolean = true
+  @Input() visible: boolean = true//possibly doesn't work and just left over from agm-core marker replication
   @Input() zIndex: number = 1
   @Input() bounds:bounds
   

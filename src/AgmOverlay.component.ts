@@ -160,7 +160,7 @@ export interface latLngPlus{
       this.overlayView.iconUrl = " "
       this.overlayView.latitude = this.latitude
       this.overlayView.longitude = this.longitude
-      this.overlayView.visible = false;
+      this.overlayView.visible = false//hide 40x40 transparent placeholder that prevents hover events
     /* end */
 
     if( this.bounds ){

@@ -1,6 +1,10 @@
 ## CHANGE LOG
 - All notable changes to this project will be documented here.
 
+## [1.3.2] - 2019-02-05
+- Remove invisible marker that's blocking hover styles
+- https://github.com/AckerApple/agm-overlays/pull/25
+
 ## [1.3.1] - 2018-10-25
 - Fix updating marker positions
 

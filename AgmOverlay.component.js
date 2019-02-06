@@ -1,4 +1,13 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var core_2 = require("@agm/core");
@@ -94,6 +103,7 @@ var AgmOverlay = (function () {
         this.overlayView.iconUrl = " ";
         this.overlayView.latitude = this.latitude;
         this.overlayView.longitude = this.longitude;
+        this.overlayView.visible = false;
         if (this.bounds) {
             this.overlayView.bounds_ = new google.maps.LatLngBounds(new google.maps.LatLng(this.latitude + this.bounds.x.latitude, this.longitude + this.bounds.x.longitude), new google.maps.LatLng(this.latitude + this.bounds.y.latitude, this.longitude + this.bounds.y.longitude));
         }
@@ -156,28 +166,54 @@ var AgmOverlay = (function () {
         var cs = eo.subscribe(function () { return _this.handleTap(); });
         this._observableSubscriptions.push(cs);
     };
-    AgmOverlay.decorators = [
-        { type: core_1.Component, args: [{
-                    selector: "agm-overlay",
-                    template: '<div #content><div style="position:absolute"><ng-content></ng-content></div></div>'
-                },] },
-    ];
-    AgmOverlay.ctorParameters = function () { return [
-        { type: core_2.GoogleMapsAPIWrapper },
-        { type: core_2.MarkerManager }
-    ]; };
-    AgmOverlay.propDecorators = {
-        latitude: [{ type: core_1.Input }],
-        longitude: [{ type: core_1.Input }],
-        visible: [{ type: core_1.Input }],
-        zIndex: [{ type: core_1.Input }],
-        bounds: [{ type: core_1.Input }],
-        markerClick: [{ type: core_1.Output }],
-        openInfoWindow: [{ type: core_1.Input }],
-        infoWindow: [{ type: core_1.ContentChildren, args: [core_2.AgmInfoWindow,] }],
-        draggable: [{ type: core_1.Input, args: ['markerDraggable',] }],
-        template: [{ type: core_1.ViewChild, args: ['content', { read: core_1.ElementRef },] }]
-    };
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Number)
+    ], AgmOverlay.prototype, "latitude", void 0);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Number)
+    ], AgmOverlay.prototype, "longitude", void 0);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Boolean)
+    ], AgmOverlay.prototype, "visible", void 0);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Number)
+    ], AgmOverlay.prototype, "zIndex", void 0);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Object)
+    ], AgmOverlay.prototype, "bounds", void 0);
+    __decorate([
+        core_1.Output(),
+        __metadata("design:type", core_1.EventEmitter)
+    ], AgmOverlay.prototype, "markerClick", void 0);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Boolean)
+    ], AgmOverlay.prototype, "openInfoWindow", void 0);
+    __decorate([
+        core_1.ContentChildren(core_2.AgmInfoWindow),
+        __metadata("design:type", core_1.QueryList)
+    ], AgmOverlay.prototype, "infoWindow", void 0);
+    __decorate([
+        core_1.Input('markerDraggable'),
+        __metadata("design:type", Boolean)
+    ], AgmOverlay.prototype, "draggable", void 0);
+    __decorate([
+        core_1.ViewChild('content', { read: core_1.ElementRef }),
+        __metadata("design:type", core_1.ElementRef)
+    ], AgmOverlay.prototype, "template", void 0);
+    AgmOverlay = __decorate([
+        core_1.Component({
+            selector: "agm-overlay",
+            template: '<div #content><div style="position:absolute"><ng-content></ng-content></div></div>'
+        }),
+        __metadata("design:paramtypes", [core_2.GoogleMapsAPIWrapper,
+            core_2.MarkerManager])
+    ], AgmOverlay);
     return AgmOverlay;
 }());
 exports.AgmOverlay = AgmOverlay;

@@ -231,7 +231,10 @@ export interface latLngPlus{
       }
     }
 
-    elm.addEventListener("click", event=>this.handleTap())
+    elm.addEventListener("click", event=>{
+      this.handleTap()
+      event.stopPropagation()
+    })
 
     this.handleInfoWindowUpdate()
 

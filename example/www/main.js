@@ -7,7 +7,7 @@
 /*! exports provided: name, version, description, main, scripts, repository, keywords, author, license, bugs, homepage, devDependencies, private, default */
 /***/ (function(module) {
 
-module.exports = {"name":"agm-overlays","version":"1.3.3","description":"Custom marker overlay for the @agm/core package","main":"dist/index","scripts":{"build":"npm-run-all build:dist compile:dist:package build:js","build:dist":"ngc --declaration --project src","test":"echo \"Error: no test specified\" && exit 1","compile:dist:package":"node scripts/update-dist-package.js","start":"npm run watch","watch":"ng serve example --port 4202 --open","build:js":"ng build example"},"repository":{"type":"git","url":"git+https://github.com/ackerapple/agm-overlays.git"},"keywords":["agm","overlay","custom","markers","google","maps"],"author":"Acker Apple","license":"MIT","bugs":{"url":"https://github.com/ackerapple/agm-overlays/issues"},"homepage":"https://github.com/ackerapple/agm-overlays#readme","devDependencies":{"@agm/core":"^1.0.0-beta.5","@agm/js-marker-clusterer":"^1.0.0-beta.5","@angular-devkit/build-angular":"^0.13.0","@angular/cli":"^7.3.0","@angular/common":"^7.2.3","@angular/compiler":"^7.2.3","@angular/compiler-cli":"^7.2.3","@angular/core":"^7.2.3","@angular/platform-browser":"^7.2.3","@angular/platform-browser-dynamic":"^7.2.3","js-marker-clusterer":"^1.0.0","npm-run-all":"^4.1.5","reflect-metadata":"^0.1.13","rxjs":"^6.4.0","typescript":"3.1.1","zone.js":"^0.8.29"},"private":true};
+module.exports = {"name":"agm-overlays","version":"1.4.0","description":"Custom marker overlay for the @agm/core package","main":"dist/index","scripts":{"build":"npm-run-all build:dist compile:dist:package build:js","build:dist":"ngc --declaration --project src","test":"echo \"Error: no test specified\" && exit 1","compile:dist:package":"node scripts/update-dist-package.js","start":"npm run watch","watch":"ng serve example --port 4202 --open","build:js":"ng build example"},"repository":{"type":"git","url":"git+https://github.com/ackerapple/agm-overlays.git"},"keywords":["agm","overlay","custom","markers","google","maps"],"author":"Acker Apple","license":"MIT","bugs":{"url":"https://github.com/ackerapple/agm-overlays/issues"},"homepage":"https://github.com/ackerapple/agm-overlays#readme","devDependencies":{"@agm/core":"^1.0.0-beta.5","@agm/js-marker-clusterer":"^1.0.0-beta.5","@angular-devkit/build-angular":"^0.13.0","@angular/cli":"^7.3.0","@angular/common":"^7.2.3","@angular/compiler":"^7.2.3","@angular/compiler-cli":"^7.2.3","@angular/core":"^7.2.3","@angular/platform-browser":"^7.2.3","@angular/platform-browser-dynamic":"^7.2.3","js-marker-clusterer":"^1.0.0","npm-run-all":"^4.1.5","reflect-metadata":"^0.1.13","rxjs":"^6.4.0","typescript":"3.1.1","zone.js":"^0.8.29"},"private":true};
 
 /***/ }),
 
@@ -182,7 +182,10 @@ var AgmOverlay = /** @class */ (function () {
                 this.div.children[0].style.height = sw.y - ne.y + 'px';
             }
         };
-        elm.addEventListener("click", function (event) { return _this.handleTap(); });
+        elm.addEventListener("click", function (event) {
+            _this.handleTap();
+            event.stopPropagation();
+        });
         this.handleInfoWindowUpdate();
         return this.overlayView;
     };

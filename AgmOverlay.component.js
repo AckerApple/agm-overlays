@@ -148,7 +148,10 @@ var AgmOverlay = (function () {
                 this.div.children[0].style.height = sw.y - ne.y + 'px';
             }
         };
-        elm.addEventListener("click", function (event) { return _this.handleTap(); });
+        elm.addEventListener("click", function (event) {
+            _this.handleTap();
+            event.stopPropagation();
+        });
         this.handleInfoWindowUpdate();
         return this.overlayView;
     };

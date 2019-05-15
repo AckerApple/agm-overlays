@@ -1,6 +1,11 @@
 ## CHANGE LOG
 - All notable changes to this project will be documented here.
 
+## [1.4.0] - 2019-05-15
+- trusting issue #29 about click marker problem
+  - https://github.com/AckerApple/agm-overlays/issues/29
+  - Fix Bug: Stop Propagation of event 'markerClick' in Overlay with on event 'mapClick' in Map
+
 ## [1.3.2] - 2019-02-05
 - Remove invisible marker that's blocking hover styles
 - https://github.com/AckerApple/agm-overlays/pull/25

@@ -79,23 +79,23 @@ var AgmOverlay = (function () {
         var _this = this;
         return this._mapsWrapper.getNativeMap()
             .then(function (map) {
-            var overlay = _this.getOverlay(map);
-            _this._markerManager.addMarker(overlay);
-            _this._addEventListeners();
-            return _this._markerManager.getNativeMarker(overlay);
-        })
+                var overlay = _this.getOverlay(map);
+                _this._markerManager.addMarker(overlay);
+                _this._addEventListeners();
+                return _this._markerManager.getNativeMarker(overlay);
+            })
             .then(function (nativeMarker) {
-            var setMap = nativeMarker.setMap;
-            if (nativeMarker['map']) {
-                _this.overlayView.setMap(nativeMarker['map']);
-            }
-            nativeMarker.setMap = function (map) {
-                setMap.call(nativeMarker, map);
-                if (_this.overlayView) {
-                    _this.overlayView.setMap(map);
+                var setMap = nativeMarker.setMap;
+                if (nativeMarker['map']) {
+                    _this.overlayView.setMap(nativeMarker['map']);
                 }
-            };
-        });
+                nativeMarker.setMap = function (map) {
+                    setMap.call(nativeMarker, map);
+                    if (_this.overlayView) {
+                        _this.overlayView.setMap(map);
+                    }
+                };
+            });
     };
     AgmOverlay.prototype.getOverlay = function (map) {
         var _this = this;
@@ -148,7 +148,7 @@ var AgmOverlay = (function () {
                 this.div.children[0].style.height = sw.y - ne.y + 'px';
             }
         };
-        elm.addEventListener("click", function (event) { return _this.handleTap(); });
+        elm.addEventListener("click", function (event) { event.stopPropagation(); return _this.handleTap(); });
         this.handleInfoWindowUpdate();
         return this.overlayView;
     };
@@ -212,7 +212,7 @@ var AgmOverlay = (function () {
             template: '<div #content><div style="position:absolute"><ng-content></ng-content></div></div>'
         }),
         __metadata("design:paramtypes", [core_2.GoogleMapsAPIWrapper,
-            core_2.MarkerManager])
+        core_2.MarkerManager])
     ], AgmOverlay);
     return AgmOverlay;
 }());

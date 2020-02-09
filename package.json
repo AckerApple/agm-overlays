@@ -21,7 +21,6 @@
     "url": "https://github.com/ackerapple/agm-overlays/issues"
   },
   "homepage": "https://github.com/ackerapple/agm-overlays#readme",
-  "private": true,
   "module": "fesm5/agm-overlays.js",
   "es2015": "fesm2015/agm-overlays.js",
   "esm5": "esm5/agm-overlays.js",

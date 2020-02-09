@@ -1,30 +1,27 @@
-"use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
-var core_2 = require("@agm/core");
-var AgmOverlay = (function () {
-    function AgmOverlay(_mapsWrapper, _markerManager) {
+import { __decorate } from 'tslib';
+import { EventEmitter, QueryList, Input, Output, ContentChildren, ViewChild, ElementRef, Component, NgModule } from '@angular/core';
+import { GoogleMapsAPIWrapper, MarkerManager, AgmInfoWindow } from '@agm/core';
+import { CommonModule } from '@angular/common';
+
+var AgmOverlay = /** @class */ (function () {
+    function AgmOverlay(_mapsWrapper, _markerManager //rename to fight the private declaration of parent
+    ) {
         this._mapsWrapper = _mapsWrapper;
         this._markerManager = _markerManager;
-        this.visible = true;
+        this.visible = true; //possibly doesn't work and just left over from agm-core marker replication
         this.zIndex = 1;
-        this.markerClick = new core_1.EventEmitter();
+        //TIP: Do NOT use this... Just put (click) on your html overlay element
+        this.markerClick = new EventEmitter();
         this.openInfoWindow = true;
-        this.infoWindow = new core_1.QueryList();
+        this.infoWindow = new QueryList();
+        //TODO, implement this
         this.draggable = false;
+        //elmGuts:any
         this._observableSubscriptions = [];
     }
     AgmOverlay.prototype.ngAfterViewInit = function () {
         var _this = this;
+        //remove reference of info windows
         var iWins = this.template.nativeElement.getElementsByTagName('agm-info-window');
         for (var x = iWins.length - 1; x >= 0; --x) {
             iWins[x].parentNode.removeChild(iWins[x]);
@@ -64,6 +61,7 @@ var AgmOverlay = (function () {
         }
         this._observableSubscriptions.forEach(function (s) { return s.unsubscribe(); });
         delete this.overlayView;
+        //delete this.elmGuts
         return promise;
     };
     AgmOverlay.prototype.handleInfoWindowUpdate = function () {
@@ -100,14 +98,19 @@ var AgmOverlay = (function () {
     AgmOverlay.prototype.getOverlay = function (map) {
         var _this = this;
         this.overlayView = this.overlayView || new google.maps.OverlayView();
+        /* make into foo marker that AGM likes */
         this.overlayView.iconUrl = " ";
         this.overlayView.latitude = this.latitude;
         this.overlayView.longitude = this.longitude;
-        this.overlayView.visible = false;
+        this.overlayView.visible = false; //hide 40x40 transparent placeholder that prevents hover events
+        /* end */
         if (this.bounds) {
             this.overlayView.bounds_ = new google.maps.LatLngBounds(new google.maps.LatLng(this.latitude + this.bounds.x.latitude, this.longitude + this.bounds.x.longitude), new google.maps.LatLng(this.latitude + this.bounds.y.latitude, this.longitude + this.bounds.y.longitude));
         }
+        // js-marker-clusterer does not support updating positions. We are forced to delete/add and compensate for .removeChild calls
         var elm = this.template.nativeElement.children[0];
+        //const elm =  this.elmGuts || this.template.nativeElement.children[0]
+        //we must always be sure to steal our stolen element back incase we are just in middle of changes and will redraw
         var restore = function (div) {
             _this.template.nativeElement.appendChild(div);
         };
@@ -125,6 +128,7 @@ var AgmOverlay = (function () {
             if (!this.div) {
                 this.div = elm;
                 var panes = this.getPanes();
+                // if no panes then assumed not on map
                 if (!panes || !panes.overlayImage)
                     return;
                 panes.overlayImage.appendChild(elm);
@@ -139,6 +143,7 @@ var AgmOverlay = (function () {
                 elm.style.top = (point.y - 20) + 'px';
             }
             if (this.bounds_) {
+                // stretch content between two points leftbottom and righttop and resize
                 var proj_1 = this.getProjection();
                 var sw = proj_1.fromLatLngToDivPixel(this.bounds_.getSouthWest());
                 var ne = proj_1.fromLatLngToDivPixel(this.bounds_.getNorthEast());
@@ -169,54 +174,68 @@ var AgmOverlay = (function () {
         var cs = eo.subscribe(function () { return _this.handleTap(); });
         this._observableSubscriptions.push(cs);
     };
+    AgmOverlay.ctorParameters = function () { return [
+        { type: GoogleMapsAPIWrapper },
+        { type: MarkerManager //rename to fight the private declaration of parent
+         }
+    ]; };
     __decorate([
-        core_1.Input(),
-        __metadata("design:type", Number)
+        Input()
     ], AgmOverlay.prototype, "latitude", void 0);
     __decorate([
-        core_1.Input(),
-        __metadata("design:type", Number)
+        Input()
     ], AgmOverlay.prototype, "longitude", void 0);
     __decorate([
-        core_1.Input(),
-        __metadata("design:type", Boolean)
+        Input()
     ], AgmOverlay.prototype, "visible", void 0);
     __decorate([
-        core_1.Input(),
-        __metadata("design:type", Number)
+        Input()
     ], AgmOverlay.prototype, "zIndex", void 0);
     __decorate([
-        core_1.Input(),
-        __metadata("design:type", Object)
+        Input()
     ], AgmOverlay.prototype, "bounds", void 0);
     __decorate([
-        core_1.Output(),
-        __metadata("design:type", core_1.EventEmitter)
+        Output()
     ], AgmOverlay.prototype, "markerClick", void 0);
     __decorate([
-        core_1.Input(),
-        __metadata("design:type", Boolean)
+        Input()
     ], AgmOverlay.prototype, "openInfoWindow", void 0);
     __decorate([
-        core_1.ContentChildren(core_2.AgmInfoWindow),
-        __metadata("design:type", core_1.QueryList)
+        ContentChildren(AgmInfoWindow)
     ], AgmOverlay.prototype, "infoWindow", void 0);
     __decorate([
-        core_1.Input('markerDraggable'),
-        __metadata("design:type", Boolean)
+        Input('markerDraggable')
     ], AgmOverlay.prototype, "draggable", void 0);
     __decorate([
-        core_1.ViewChild('content', { read: core_1.ElementRef }),
-        __metadata("design:type", core_1.ElementRef)
+        ViewChild('content', { read: ElementRef })
     ], AgmOverlay.prototype, "template", void 0);
     AgmOverlay = __decorate([
-        core_1.Component({
+        Component({
             selector: "agm-overlay",
             template: '<div #content><div style="position:absolute"><ng-content></ng-content></div></div>'
-        }),
-        __metadata("design:paramtypes", [core_2.GoogleMapsAPIWrapper,
-            core_2.MarkerManager])
+        })
     ], AgmOverlay);
     return AgmOverlay;
 }());
-exports.AgmOverlay = AgmOverlay;
+
+var AgmOverlays = /** @class */ (function () {
+    function AgmOverlays() {
+    }
+    AgmOverlays = __decorate([
+        NgModule({
+            imports: [
+                CommonModule
+            ],
+            declarations: [AgmOverlay],
+            exports: [AgmOverlay],
+        })
+    ], AgmOverlays);
+    return AgmOverlays;
+}());
+
+/**
+ * Generated bundle index. Do not edit.
+ */
+
+export { AgmOverlay, AgmOverlays };
+//# sourceMappingURL=agm-overlays.js.map

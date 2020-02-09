@@ -1,16 +1,16 @@
 {
   "name": "agm-overlays",
-  "version": "1.4.0",
+  "version": "2.0.0",
   "description": "Custom marker overlay for the @agm/core package",
   "main": "dist/index",
   "scripts": {
-    "build": "npm-run-all build:dist compile:dist:package build:js",
-    "build:dist": "ngc --declaration --project src",
+    "build": "npm-run-all build:dist:js update:dist build:example",
+    "build:dist:js": "ng-packagr -p package.json",
+    "update:dist": "node scripts/update-dist-package.js",
+    "build:example": "ng build example --prod",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "compile:dist:package": "node scripts/update-dist-package.js",
     "start": "npm run watch",
-    "watch": "ng serve example --port 4202 --open",
-    "build:js": "ng build example"
+    "watch": "ng serve example --port 4202 --open"
   },
   "repository": {
     "type": "git",
@@ -31,22 +31,28 @@
   },
   "homepage": "https://github.com/ackerapple/agm-overlays#readme",
   "devDependencies": {
-    "@agm/core": "^1.0.0-beta.5",
-    "@agm/js-marker-clusterer": "^1.0.0-beta.5",
-    "@angular-devkit/build-angular": "^0.13.0",
-    "@angular/cli": "^7.3.0",
-    "@angular/common": "^7.2.3",
-    "@angular/compiler": "^7.2.3",
-    "@angular/compiler-cli": "^7.2.3",
-    "@angular/core": "^7.2.3",
-    "@angular/platform-browser": "^7.2.3",
-    "@angular/platform-browser-dynamic": "^7.2.3",
+    "@agm/core": "^1.1.0",
+    "@agm/js-marker-clusterer": "^1.1.0",
+    "@angular-devkit/build-angular": "^0.900.1",
+    "@angular/cli": "^9.0.1",
+    "@angular/common": "^9.0.0",
+    "@angular/compiler": "^9.0.0",
+    "@angular/compiler-cli": "^9.0.0",
+    "@angular/core": "^9.0.0",
+    "@angular/platform-browser": "^9.0.0",
+    "@angular/platform-browser-dynamic": "^9.0.0",
     "js-marker-clusterer": "^1.0.0",
+    "ng-packagr": "^9.0.0",
     "npm-run-all": "^4.1.5",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^6.4.0",
-    "typescript": "3.1.1",
-    "zone.js": "^0.8.29"
+    "rxjs": "^6.5.4",
+    "typescript": "^3.6.4",
+    "zone.js": "^0.10.2"
   },
-  "private": true
+  "private": true,
+  "ngPackage": {
+    "lib": {
+      "entryFile": "src/index.ts"
+    }
+  }
 }

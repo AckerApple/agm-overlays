@@ -1,8 +1,8 @@
 {
   "name": "agm-overlays",
-  "version": "1.4.0",
+  "version": "2.0.0",
   "description": "Custom marker overlay for the @agm/core package",
-  "main": "index",
+  "main": "bundles/agm-overlays.umd.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ackerapple/agm-overlays.git"
@@ -20,5 +20,18 @@
   "bugs": {
     "url": "https://github.com/ackerapple/agm-overlays/issues"
   },
-  "homepage": "https://github.com/ackerapple/agm-overlays#readme"
+  "homepage": "https://github.com/ackerapple/agm-overlays#readme",
+  "private": true,
+  "module": "fesm5/agm-overlays.js",
+  "es2015": "fesm2015/agm-overlays.js",
+  "esm5": "esm5/agm-overlays.js",
+  "esm2015": "esm2015/agm-overlays.js",
+  "fesm5": "fesm5/agm-overlays.js",
+  "fesm2015": "fesm2015/agm-overlays.js",
+  "typings": "agm-overlays.d.ts",
+  "metadata": "agm-overlays.metadata.json",
+  "sideEffects": false,
+  "peerDependencies": {
+    "tslib": "^1.10.0"
+  }
 }

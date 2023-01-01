@@ -33,7 +33,7 @@
   "devDependencies": {
     "@agm/core": "^1.1.0",
     "@agm/js-marker-clusterer": "^1.1.0",
-    "@angular-devkit/build-angular": "^0.900.1",
+    "@angular-devkit/build-angular": "^15.0.4",
     "@angular/cli": "^9.0.1",
     "@angular/common": "^9.0.0",
     "@angular/compiler": "^9.0.0",

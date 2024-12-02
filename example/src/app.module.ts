@@ -13,7 +13,7 @@ import { AgmOverlays } from "../../src"
     BrowserModule,
     AgmOverlays,
     AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyD2Z0LzbjZXiqRAsVYTl4OP7cK7hdgR89U'
+      apiKey: '...paste-your-key-here...'
     }),
     AgmJsMarkerClustererModule
   ],
